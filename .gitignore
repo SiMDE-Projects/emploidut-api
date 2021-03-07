@@ -6,6 +6,9 @@
 # Compilde code from .ts files with tsc
 js/
 
+# .env file
+.env
+
 # IDE - VSCode
 .vscode/*
 !.vscode/settings.json

@@ -1,3 +1,4 @@
+require('dotenv').config()
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -7,7 +8,7 @@ var logger = require('morgan');
 var indexRouter = require('../../routes/index');
 var usersRouter = require('../../routes/users');
 var app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 export class Server {
 
@@ -15,7 +16,7 @@ export class Server {
 
     async start() {
         // view engine setup
-        app.set('views', path.resolve('./','./views'));
+        app.set('views', path.resolve('./', './views'));
         app.set('view engine', 'pug');
 
         app.use(logger('dev'));
