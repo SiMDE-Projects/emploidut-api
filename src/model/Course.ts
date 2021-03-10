@@ -1,8 +1,10 @@
+import { Model } from 'sequelize';
+
 /**
  * Initial class for one course
  * @class Course
  */
-export class Course {
+export class Course extends Model {
     
     id: number = 0;
 
@@ -10,7 +12,7 @@ export class Course {
      * Constructor for Course
      */
     constructor () {
-        this.id = 1;
+        super();
     }
 
 }
