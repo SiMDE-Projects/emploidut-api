@@ -11,7 +11,7 @@ server.start().then( () => {
 
 // Catch Ctrl+C and properly stop the app
 process.on('SIGINT', () => {
-  console.log('SIGINT (Ctrl+C) received. Stopping emploidutemps.')
+  console.log('SIGINT (Ctrl+C) received. Stopping emploidut.')
   server.stop().then( () => {
     process.exit()
   })
