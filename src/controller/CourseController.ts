@@ -1,4 +1,4 @@
-import { Course } from './../model/Course';
+import { Course } from '../entity/Course';
 
 export class CourseController {
     /**
