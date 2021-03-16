@@ -2,21 +2,6 @@ import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { Server } from './model/Server';
 
-<<<<<<< f817cab3b92f391aae33e9e99c83e67dc0419292
-// Start the app
-const server = new Server();
-server.start().then( () => {
-  console.log(`The server has started`);
-});
-
-// Catch Ctrl+C and properly stop the app
-process.on('SIGINT', () => {
-  console.log('SIGINT (Ctrl+C) received. Stopping emploidut.')
-  server.stop().then( () => {
-    process.exit()
-  })
-})
-=======
 // Cretate the connection to the database
 createConnection(
 {
@@ -61,4 +46,3 @@ createConnection(
 })
 
 }).catch(error => console.log(error));
->>>>>>> Update file in order to use typeORM

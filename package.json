@@ -34,10 +34,6 @@
     "typescript": "^4.2.3"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "@types/dotenv": "^8.2.0",
-=======
->>>>>>> add_sql_orm
     "express": "^4.17.1"
   }
 }
