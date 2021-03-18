@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { createConnection } from "typeorm";
-import { Server } from './model/Server';
+import { Server } from './services/Server';
 
 // Cretate the connection to the database
 createConnection(
