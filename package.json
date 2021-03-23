@@ -13,7 +13,14 @@
     "type": "git",
     "url": "git+https://github.com/SiMDE-Projects/emploidut-api.git"
   },
-  "author": "Arthur WACQUEZ <arthur.wacquez@gmail.com> && Victor TONDOLO <victor.tondolo@gmail.com> && SiMDE <simde@assos.utc.fr>",
+  "author": {
+    "name": "SIMDE",
+    "email": "simde@assos.utc.fr"
+  },
+  "contributors": [
+    "Arthur WACQUEZ <arthur.wacquez@gmail.com>",
+    "Victor TONDOLO <victor.tondolo@gmail.com>"
+  ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/SiMDE-Projects/emploidut-api/issues"
