@@ -1,4 +1,4 @@
-import { TimeSlot } from "../model/TimeSlot";
+import { TimeSlot } from "../entity/TimeSlot";
 
 export class TimeSlotController {
     /** 

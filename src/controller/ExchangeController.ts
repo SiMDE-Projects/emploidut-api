@@ -1,4 +1,4 @@
-import { Exchange } from './../model/Exchange';
+import { Exchange } from './../entity/Exchange';
 
 export class ExchangeController {
     /**
