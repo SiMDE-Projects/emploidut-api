@@ -1,24 +1,37 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import {Entity, PrimaryColumn, Column} from "typeorm";
 
 @Entity()
 export class User {
 
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryColumn()
+    id: String;
 
     @Column()
-    firstName: string;
+    firstName: String;
 
     @Column()
-    lastName: string;
+    lastName: String;
 
     @Column()
-    age: number;
+    email: String;
 
-    public constructor(id =0, age =0, firstName = '', lastName = '',) {
-        this.id = id;
-        this.age = age;
-        this.firstName = firstName;
-        this.lastName = lastName;
+    @Column()
+    semester: String;
+    
+    @Column()
+    enableConsultation: Boolean;
+    
+    @Column()
+    enableViewing: Boolean;
+
+    public constructor(_id = '', _firstName = '', _lastName = '', _email = '', _semester = '', 
+        _enableConsultation = true, _enableViewing = true) {
+        this.id = _id;
+        this.firstName = _firstName;
+        this.lastName = _lastName;
+        this.email = _email;
+        this.semester = _semester;
+        this.enableConsultation = _enableConsultation;
+        this.enableViewing = _enableViewing;
     }
 }
