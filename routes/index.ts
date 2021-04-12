@@ -20,32 +20,32 @@ router.get('/emploidut', function(req?: any, res?: any, next?: any) {
 /*********** Route: timeslots ************/
 
 /* GET timeslots for one student (login) */
-router.get('/timeslots', TimeSlotController.getTimeSlots)
+router.get('/timeslots', TimeSlotController.getTimeSlots);
 
 /* POST timeslots for one student (login) */
-router.post('/timeslots', TimeSlotController.postTimeSlots)
+router.post('/timeslots', TimeSlotController.postTimeSlots);
 
 /* PUT timeslots for one student (login) */
-router.put('/timeslots', TimeSlotController.putTimeSlots)
+router.put('/timeslots', TimeSlotController.putTimeSlots);
 
 /*********** Route: courses ************/
 
 /* GET courses for one student (login) */
-router.get('/courses', CourseController.getCourses)
+router.get('/courses', CourseController.getCourses);
 /* POST courses for one student (login) */
-router.post('/courses', CourseController.postCourses)
+router.post('/courses', CourseController.postCourses);
 /* PUT courses for one student (login) */
-router.put('/courses', CourseController.putCourses)
+router.put('/courses', CourseController.putCourses);
 
 /*********** Route: exchanges ************/
 
 /* GET exchange for one student (login) */
-router.get('/exchanges', ExchangeController.getExchanges)
+router.get('/exchanges', ExchangeController.getExchanges);
 
 /* POST exchange for one student (login) */
-router.post('/exchanges', ExchangeController.postExchanges)
+router.post('/exchanges', ExchangeController.postExchanges);
 
 /* PUT exchange for one student (login) */
-router.put('/exchanges', ExchangeController.putExchanges)
+router.put('/exchanges', ExchangeController.putExchanges);
 
 module.exports = router;

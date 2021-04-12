@@ -41,8 +41,7 @@ createConnection(
     process.on('SIGINT', () => {
       console.log('SIGINT (Ctrl+C) received. Stopping emploidut.')
       server.stop().then( () => {
-        process.exit()
+        process.exit();
       })
-})
-
+    })
 }).catch(error => console.log(error));

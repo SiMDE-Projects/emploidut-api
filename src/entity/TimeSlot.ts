@@ -5,7 +5,8 @@ import { Entity, PrimaryGeneratedColumn } from "typeorm";
  * @class TimeSlot
  */
 @Entity()
- export class TimeSlot {
+export class TimeSlot {
+
     @PrimaryGeneratedColumn()
     id: number = 0;
 

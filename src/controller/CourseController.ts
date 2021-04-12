@@ -5,27 +5,17 @@ export class CourseController {
      * GET courses for one student (login)
      * Expect the login in queryParams
     */
-    public static getCourses = async (req?: any, res?: any, next?: any) => {
-        const  course = new Course();
-        res.send(`user : ${req.query.login}, login : ${course.id}`);
-    }
+    public static getCourses = async (req?: any, res?: any, next?: any) => {}
 
     /**
      * GET courses for one student (login)
      * Expect the login in queryParams
     */
-    public static postCourses = async (req?: any, res?: any, next?: any) => {
-        const course = new Course();
-        res.send(`user : ${req.query.login}, login : ${course.id}`);
-    }
+    public static postCourses = async (req?: any, res?: any, next?: any) => {}
 
     /**
      * PUT courses for one student (login)
      * Expect the login in queryParams
     */
-    public static putCourses = async (req?: any, res?: any, next?: any) => {
-        const course = new Course();
-        res.send(`user : ${req.query.login}, login : ${course.id}`);
-    }
-
+    public static putCourses = async (req?: any, res?: any, next?: any) => {}
 }
