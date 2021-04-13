@@ -4,6 +4,7 @@ var router = express.Router();
 import { TimeSlotController } from '../src/controller/TimeSlotController';
 import { CourseController } from '../src/controller/CourseController';
 import { ExchangeController } from '../src/controller/ExchangeController';
+import { UserController } from '../src/controller/UserController';
 
 /* GET home page. */
 router.get('/', function(req?: any, res?: any, next?: any) {
@@ -21,10 +22,8 @@ router.get('/emploidut', function(req?: any, res?: any, next?: any) {
 
 /* GET timeslots for one student (login) */
 router.get('/timeslots', TimeSlotController.getTimeSlots);
-
 /* POST timeslots for one student (login) */
 router.post('/timeslots', TimeSlotController.postTimeSlots);
-
 /* PUT timeslots for one student (login) */
 router.put('/timeslots', TimeSlotController.putTimeSlots);
 
@@ -41,11 +40,18 @@ router.put('/courses', CourseController.putCourses);
 
 /* GET exchange for one student (login) */
 router.get('/exchanges', ExchangeController.getExchanges);
-
 /* POST exchange for one student (login) */
 router.post('/exchanges', ExchangeController.postExchanges);
-
 /* PUT exchange for one student (login) */
 router.put('/exchanges', ExchangeController.putExchanges);
+
+/*********** Route: users ************/
+
+/* GET exchange for one student (login) */
+router.get('/users', UserController.getUsers);
+/* POST exchange for one student (login) */
+router.post('/users', UserController.postUsers);
+/* PUT exchange for one student (login) */
+router.put('/users', UserController.putUsers);
 
 module.exports = router;
