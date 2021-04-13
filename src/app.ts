@@ -3,8 +3,7 @@ import { createConnection } from "typeorm";
 import { Server } from './services/Server';
 
 // Cretate the connection to the database
-createConnection(
-{
+createConnection({
   type: "mysql",
   host: process.env.DB_HOSTNAME,
   port: 3306,
@@ -27,8 +26,7 @@ createConnection(
     migrationsDir: process.env.DB_CLI_MIGRATIONS_DIR || '',
     subscribersDir: process.env.DB_CLI_SUSCRIBERS_DIR || '' 
   }
-}
-).then(async connection => {
+}).then(async connection => {
     console.log("Connected to the database");
 
     // Start the app
