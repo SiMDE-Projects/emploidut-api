@@ -1,10 +1,11 @@
 import express from 'express';
-var router = express.Router();
-
 import { TimeSlotController } from '../src/controller/TimeSlotController';
 import { CourseController } from '../src/controller/CourseController';
 import { ExchangeController } from '../src/controller/ExchangeController';
 import { UserController } from '../src/controller/UserController';
+import { EmploiDuTempsController } from '../src/controller/EmploiDuTempsController';
+
+var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req?: any, res?: any, next?: any) {
@@ -14,9 +15,7 @@ router.get('/', function(req?: any, res?: any, next?: any) {
 /*********** Route: emploidut ************/
 
 /* GET Emploidutemps. */
-router.get('/emploidut', function(req?: any, res?: any, next?: any) {
-  res.render('index', { title: `Emploid'ut` });
-});
+router.get('/emploidut', EmploiDuTempsController.getEmploidut);
 
 /*********** Route: timeslots ************/
 
