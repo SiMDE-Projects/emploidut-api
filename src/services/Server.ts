@@ -9,7 +9,7 @@ var indexRouter = require('../../routes/index');
 var app = express();
 const port = process.env.PORT || 3000;
 
-import { oauth2, authURL } from '../services/Authentication';
+import { authenticationFilter } from '../services/Authentication';
 
 export class Server {
 
@@ -27,39 +27,7 @@ export class Server {
         app.use(cookieParser());
         //app.use(express.static(path.join(__dirname, './../public')));
 
-        app.all('*', function (req?: any, res?: any, next?: any) {
-            /**
-             * Check if the user is connected
-             */
-            if (req.query.code === null || req.query.code === undefined) {
-                // Handle redirection (the user is not connected th oauth2 yet)
-                return res.redirect(authURL);
-            } else {
-                /** Obtaining access_token */
-                oauth2.getOAuthAccessToken(
-                req.query.code,
-                {
-                    'redirect_uri': 'http://localhost:3000/',
-                    'grant_type':'authorization_code'
-                },
-                function (e, access_token, refresh_token, results){
-                    if (e) {
-                        console.log(e);
-                        res.end(e);
-                    } else if (results.error) {
-                        console.log(results);
-                        res.end(JSON.stringify(results));
-                    }
-                    else {
-                        console.log('Obtained access_token: ', access_token);
-                        res.end( access_token);
-                    }
-                });
-            }
-
-            // Send the request to next server's middlware
-            next();
-        });
+        app.all('*', authenticationFilter);
 
         app.use('/', indexRouter);
 
