@@ -10,12 +10,13 @@ export class UserController {
     */
     public static getUsers = async (req?: any, res?: any, next?: any) => {
         // Get users by timeSlot
-        if(req.query.timeSlot !== undefined && req.query.timeSlot !== null){
-            const timeSlot = await getRepository(TimeSlot).find({id: req.query.login});
+        const timeSlotQueryParam = req.query.timeSlot;
+        if(timeSlotQueryParam !== undefined && timeSlotQueryParam !== null){
+            const timeSlot = await getRepository(TimeSlot).findOne({id: req.query.login});
             console.log("TimeSlots: ", timeSlot);
             //Check if the user exist
-            if (timeSlot !== null && timeSlot !== undefined && timeSlot.length > 0) {
-                res.json(UserService.getUsersByTimeSlots(req.query.timeSlot)).end();
+            if (timeSlot !== null && timeSlot !== undefined) {
+                res.json(UserService.getUsersByTimeSlots(timeSlotQueryParam)).end();
                 return;
             } else {
                 res.status(404).send('Entity not found').end();
@@ -24,8 +25,9 @@ export class UserController {
         }
 
         // Get users by login
-        if (req.query.login !== undefined && req.query.login !== null) {
-            const user = await getRepository(User).find({ id: req.query.login });
+        const loginQueryParam = req.query.login;
+        if (loginQueryParam !== undefined && loginQueryParam !== null) {
+            const user = await getRepository(User).findOne({ id: loginQueryParam });
             console.log("User by login:", user);
             res.json(user).end();
             return;
