@@ -1,13 +1,16 @@
 var OAuth = require('oauth');
-
+var axios = require('axios');
 /**
  * Create var for the authentication middleware
 */
 
+const portailURL = 'http://localhost:8000';
+const redirectURL = 'http://localhost:3000/';
+
 var oauth2 = new OAuth.OAuth2(
     process.env.AUTH_CLIENT_ID,
     process.env.AUTH_CLIENT_SECRET,
-    'http://localhost:8000/',
+    `${portailURL}/`,
     'oauth/authorize',
     'oauth/token',
     null
@@ -15,22 +18,35 @@ var oauth2 = new OAuth.OAuth2(
 
 var authURL = oauth2.getAuthorizeUrl({
     response_type: 'code',
-    redirect_uri: 'http://localhost:3000/', // TODO: Add the real rediction
+    redirect_uri: redirectURL, // TODO: Add the real rediction
     scope: ['user-get-info user-get-assos user-get-roles'],
     state: ''
 });
 
-export const authenticationFilter = function (req?: any, res?: any, next?: any) {
-
+export const authenticationFilter = function (req, res, next) {
     /**
      * Check if the request contains a valid token
      */
     const token = req.header('authorization');
     if (token !== null && token !== undefined && token !== '') {
-        // TODO: Check if the token is valid. If not, redirect to cas
-        // if (!isValid()) {
-        //     return res.redirect(authURL);
-        // }
+        // Check if the token is valid (use routes)
+        axios({
+            method: 'GET',
+            url: `${portailURL}/api/v1/user`,
+            headers: {
+                'Accept': 'application/json',
+                'Accept-Charset': 'utf-8',
+                'Authorization': token
+            }
+        }).then(function (response) {
+            // The token is not valid
+            if (response.status !== 200) {
+                // Redirect to cas
+                return res.redirect(authURL);
+            }
+        }).catch(function (err) {
+            console.error(err);
+        });
 
         // Send the request to next server's middlware
         next();
@@ -38,32 +54,53 @@ export const authenticationFilter = function (req?: any, res?: any, next?: any) 
     }
 
     /**
-     * Check if the user is connected
+     * Check if the request has query parameters named code
      */
-    if (req.query.code === null || req.query.code === undefined || req.query.code === '') {
-        // Handle redirection (the user is not connected th oauth2 yet)
+    const authorizationCode = req.query.code;
+
+    if (authorizationCode === null || authorizationCode === undefined || authorizationCode === '') {
+        // Handle redirection (the user is not connected with oauth2 yet)
         return res.redirect(authURL);
     } else {
         /** Obtaining access_token */
         oauth2.getOAuthAccessToken(
-        req.query.code,
-        {
-            'redirect_uri': 'http://localhost:3000/',
-            'grant_type':'authorization_code'
-        },
-        function (e, access_token, refresh_token, results){
-            if (e) {
-                console.log(e);
-                res.end(e);
-            } else if (results.error) {
-                console.log(results);
-                res.end(JSON.stringify(results));
+            authorizationCode,
+            {
+                'redirect_uri': redirectURL,
+                'grant_type':'authorization_code'
+            },
+            function (err, access_token, refresh_token, results){
+                if (err) {
+                    console.log(err);
+                    res.end(err);
+                    return;
+                } else if (results.error) {
+                    console.log(results);
+                    res.end(JSON.stringify(results));
+                }
+                else {
+                    console.log('Obtained access_token: ', access_token);
+                    res.end(access_token);
+
+                    // Get information from the connected user
+                    // Need to be admin to perform the request
+                    axios({
+                        method: 'GET',
+                        url: `${portailURL}/api/v1/user`,
+                        headers: {
+                            'Accept': 'application/json',
+                            'Accept-Charset': 'utf-8',
+                            'Authorization': 'Bearer ' + access_token
+                        }
+                    }).then(function (response) {
+                        // Print user information
+                        console.log(response.data);
+                    }).catch(function (err) {
+                        console.error(err);
+                    });
+                }
             }
-            else {
-                console.log('Obtained access_token: ', access_token);
-                res.end(access_token);
-            }
-        });
+        );
     }
 
     // Send the request to next server's middlware
