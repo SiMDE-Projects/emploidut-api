@@ -1,4 +1,5 @@
-import { Entity, PrimaryColumn , Column } from "typeorm";
+import { Entity, PrimaryColumn , Column, OneToMany, JoinTable } from "typeorm";
+import { TimeSlot } from "./TimeSlot";
 
 export type courseType = 'CS' | 'TM' | 'TSH';
 
@@ -10,20 +11,21 @@ export type courseType = 'CS' | 'TM' | 'TSH';
 export class Course {
   
     @PrimaryColumn()
-    id: String;
+    id: String = '';
 
-    @Column()
-    name: String;
+    @Column("varchar")
+    name: String = '';
 
-    @Column()
-    type: courseType;
+    @Column({
+        type: "enum",
+        enum: ["CS" , "TM" , "TSH"],
+        default: "CS"
+    })
+    type: courseType = 'CS';
 
-    /**
-     * Constructor for Course
-     */
-    constructor (_id = '', _name = '', _type: courseType) {
-        this.id = _id;
-        this.name = _name;
-        this.type = _type;
-    }
+    @OneToMany(() => TimeSlot, timeslots => timeslots.course, {
+        eager: true
+    })
+    @JoinTable()
+    timeslots!: TimeSlot[];
 }

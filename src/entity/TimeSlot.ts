@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Course } from "./Course";
 
 /**
  * Initial class for course's TimeSlot
@@ -10,9 +11,6 @@ export class TimeSlot {
     @PrimaryGeneratedColumn()
     id: number = 0;
 
-    /**
-     * Constructor for TimeSlot
-     */
-    constructor () {
-    }
+    @ManyToOne(() => Course, course => course.timeslots)
+    course!: Course;
 }
