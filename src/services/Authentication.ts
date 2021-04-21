@@ -23,7 +23,7 @@ var authURL = oauth2.getAuthorizeUrl({
     state: ''
 });
 
-export const authenticationFilter = function (req, res, next) {
+export const authenticationFilter = function (req?:any, res?:any, next?:any) {
     /**
      * Check if the request contains a valid token
      */
@@ -38,13 +38,13 @@ export const authenticationFilter = function (req, res, next) {
                 'Accept-Charset': 'utf-8',
                 'Authorization': token
             }
-        }).then(function (response) {
+        }).then(function (response:any) {
             // The token is not valid
             if (response.status !== 200) {
                 // Redirect to cas
                 return res.redirect(authURL);
             }
-        }).catch(function (err) {
+        }).catch(function (err:any) {
             console.error(err);
         });
 
@@ -69,7 +69,7 @@ export const authenticationFilter = function (req, res, next) {
                 'redirect_uri': redirectURL,
                 'grant_type':'authorization_code'
             },
-            function (err, access_token, refresh_token, results){
+            function (err:any, access_token:any, refresh_token:any, results:any){
                 if (err) {
                     console.log(err);
                     res.end(err);
@@ -92,10 +92,10 @@ export const authenticationFilter = function (req, res, next) {
                             'Accept-Charset': 'utf-8',
                             'Authorization': 'Bearer ' + access_token
                         }
-                    }).then(function (response) {
+                    }).then(function (response:any) {
                         // Print user information
                         console.log(response.data);
-                    }).catch(function (err) {
+                    }).catch(function (err:any) {
                         console.error(err);
                     });
                 }
