@@ -1,5 +1,3 @@
-import { response } from "express";
-
 var OAuth = require('oauth');
 var axios = require('axios');
 /**
