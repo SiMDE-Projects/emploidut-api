@@ -4,9 +4,9 @@ import {Entity, PrimaryColumn, Column} from "typeorm";
 export class User {
 
     @PrimaryColumn("char", { length: 36 })
-    id: String;
+    id: String = '';
     
-    @Column("varchar", { length: 10, nullable: true})
+    @Column("varchar", { length: 10, nullable: true, unique: true})
     login!: String;
 
     @Column({default: true})
@@ -14,8 +14,4 @@ export class User {
 
     @Column({default: true})
     enableViewing: Boolean = true;
-
-    public constructor(_id = '') {
-        this.id = _id;
-    }
 }
