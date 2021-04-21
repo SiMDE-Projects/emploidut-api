@@ -34,7 +34,7 @@ export const authenticationFilter = async function (req:any, res:any, next:any) 
         // Check if the token is valid (use routes)
         const responseAxios = await axios({
             method: 'GET',
-            url: `${portailURL}/api/v1/user`,
+            url: `${portailURL}/api/v1/user`, // TODO: use specific route
             headers: {
                 'Accept': 'application/json',
                 'Accept-Charset': 'utf-8',
