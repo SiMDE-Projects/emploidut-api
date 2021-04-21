@@ -10,9 +10,11 @@ export class CourseController {
         if (req.query.uv !== undefined && req.query.uv !== null) {
             const courses = await getRepository(Course).find({ id: req.query.uv });
             res.json(courses);
+            return;
         } else {
             const courses = await getRepository(Course).find();
             res.json(courses);
+            return;
         }
     }
 
