@@ -1,11 +1,13 @@
+import { response } from "express";
+
 var OAuth = require('oauth');
 var axios = require('axios');
 /**
  * Create var for the authentication middleware
 */
 
-const portailURL = 'http://localhost:8000';
-const redirectURL = 'http://localhost:3000/';
+const portailURL = process.env.AUTH_PORTAIL_URL;
+const redirectURL = process.env.AUTH_REDIRECT_URL;
 
 var oauth2 = new OAuth.OAuth2(
     process.env.AUTH_CLIENT_ID,
@@ -23,14 +25,14 @@ var authURL = oauth2.getAuthorizeUrl({
     state: ''
 });
 
-export const authenticationFilter = function (req?:any, res?:any, next?:any) {
+export const authenticationFilter = async function (req:any, res:any, next:any) {
     /**
      * Check if the request contains a valid token
      */
     const token = req.header('authorization');
     if (token !== null && token !== undefined && token !== '') {
         // Check if the token is valid (use routes)
-        axios({
+        const responseAxios = await axios({
             method: 'GET',
             url: `${portailURL}/api/v1/user`,
             headers: {
@@ -38,15 +40,15 @@ export const authenticationFilter = function (req?:any, res?:any, next?:any) {
                 'Accept-Charset': 'utf-8',
                 'Authorization': token
             }
-        }).then(function (response:any) {
-            // The token is not valid
-            if (response.status !== 200) {
-                // Redirect to cas
-                return res.redirect(authURL);
-            }
-        }).catch(function (err:any) {
-            console.error(err);
+        }).catch((err: any) => {
+            return err.response;
+        }).then((response: any) => {
+            return response;
         });
+
+        if ( responseAxios.status !== 200) {
+            return res.redirect(authURL);
+        }
 
         // Send the request to next server's middlware
         next();
