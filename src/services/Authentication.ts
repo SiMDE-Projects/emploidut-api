@@ -27,8 +27,13 @@ export const authenticationFilter = async function (req:any, res:any, next:any) 
     /**
      * Check if the request contains a valid token
      */
-    const token = req.header('authorization');
+    let token = req.header('authorization');
     if (token !== null && token !== undefined && token !== '') {
+        // Chek if we receive a Bearer token
+        if (!token.startsWith("Bearer")){
+            token =  'Bearer ' + token;
+        }
+
         // Check if the token is valid (use routes)
         const responseAxios = await axios({
             method: 'GET',
@@ -83,7 +88,6 @@ export const authenticationFilter = async function (req:any, res:any, next:any) 
                     res.end(access_token);
 
                     // Get information from the connected user
-                    // Need to be admin to perform the request
                     axios({
                         method: 'GET',
                         url: `${portailURL}/api/v1/user`,
