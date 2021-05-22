@@ -1,17 +1,35 @@
+import { Request, Response, Router } from "express";
 import { getRepository } from "typeorm";
 import { Course } from "../entity/Course";
+import { CourseService } from "../services/CourseService";
 
 export class CourseController {
+
+    private courseService: CourseService;
+    public router: Router;
+
+    constructor() {
+        this.courseService = new CourseService();
+        this.router = Router();
+        this.routes();
+    }
+
+    public routes(){
+        this.router.get('/', this.getCourses);
+        this.router.post('/', this.postCourses);
+        this.router.put('/', this.putCourses);
+    }
+
     /**
      * GET courses for one student (login)
      * Expect the login in queryParams
     */
-    public static getCourses = async (req?: any, res?: any, next?: any) => {
+    public getCourses = async (req: Request, res: Response, next?: any) => {
 
         // Check if there is a query named course
         const courseQueryParam = req.query.course;
         if (courseQueryParam !== undefined && courseQueryParam !== null) {
-            const course = await getRepository(Course).findOne({ id: courseQueryParam });
+            const course = await getRepository(Course).findOne({ id: String(courseQueryParam) });
             
             if (course === undefined  || course === null) {
                 // Send 404 error
@@ -33,11 +51,11 @@ export class CourseController {
      * GET courses for one student (login)
      * Expect the login in queryParams
     */
-    public static postCourses = async (req?: any, res?: any, next?: any) => {}
+    public postCourses = async (req: Request, res: Response, next?: any) => {}
 
     /**
      * PUT courses for one student (login)
      * Expect the login in queryParams
     */
-    public static putCourses = async (req?: any, res?: any, next?: any) => {}
+    public putCourses = async (req: Request, res: Response, next?: any) => {}
 }
