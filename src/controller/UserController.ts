@@ -43,11 +43,11 @@ export class UserController {
         // Get users by timeSlot
         const timeSlotQueryParam = req.query.timeSlot;
         if(timeSlotQueryParam !== undefined && timeSlotQueryParam !== null){
-            const timeSlot = await getRepository(TimeSlot).findOne({id: req.query.login});
+            const timeSlot = await getRepository(TimeSlot).findOne({id: parseInt(String(req.query.login))});
             console.log("TimeSlots: ", timeSlot);
             //Check if the user exist
             if (timeSlot !== null && timeSlot !== undefined) {
-                res.json(UserService.getUsersByTimeSlots(timeSlotQueryParam)).end();
+                // Process request
                 return;
             } else {
                 res.status(404).send('Entity not found').end();
