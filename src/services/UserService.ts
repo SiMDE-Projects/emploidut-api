@@ -7,18 +7,18 @@ import {User} from "../entity/User";
  * User service class
 */
 export class UserService {
-    /*
+
     private userRepository: UserRepository;
     constructor() {
         this.userRepository = getCustomRepository(UserRepository);
         console.log(this.userRepository);
-    } */
+    }
 
     public findUser = async (id: number) => {
-        console.log(id);
-        //return this.userRepository.findOne(id);
+        const user = await this.userRepository.findOne(id);
+        return user;
         //console.log("test");
-        return await getRepository(User).findOne(id);
+        //return await getRepository(User).findOne(id);
     }
 
     //public async findAll()

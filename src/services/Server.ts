@@ -1,52 +1,80 @@
+import {Connection, createConnection} from "typeorm";
+import express from "express";
+import {UserController} from "../controller/UserController";
 require('dotenv').config()
 var createError = require('http-errors');
-var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
-var indexRouter = require('../../routes/index');
 var app = express();
 const port = process.env.PORT || 3000;
 
 export class Server {
+    private
+    private app: express.Application;
+    private userController?: UserController;
 
-    constructor() {}
+    constructor(){
+        this.app = express(); // init the application
+        this.configuration();
+        this.routes();
 
-    async start() {
-        // view engine setup
-        app.set('views', path.resolve('./', './views'));
-        app.set('view engine', 'pug');
-
-        app.use(logger('dev'));
-        app.use(express.json());
-        app.use(express.urlencoded({ extended: false }));
-        app.use(cookieParser());
-
-        app.use('/', indexRouter);
-
-        // catch 404 and forward to error handler
-        app.use(function(req?: any, res?: any, next?: any) {
-            next(createError(404));
-        });
-
-        // error handler
-        app.use(function(err?: any, req?: any, res?: any, next?: any) {
-            // set locals, only providing error in development
-            res.locals.message = err.message;
-            console.log(res.locals.message);
-            res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-            // render the error page
-            res.status(err.status || 500);
-            res.render('error');
-        });
-
-        // Start the app
-        app.listen(port, () => {
-            console.log(`Start listening at http://localhost:${port}`)
-        })
     }
 
-    async stop() {}
+    /**
+     * Method to configure the server,
+     * If we didn't configure the port into the environment
+     * variables it takes the default port 3000
+     */
+    public configuration() {
+        this.app.set('port', process.env.PORT || 3001);
+        this.app.use(express.json());
+    }
+
+    /**
+     * Method to configure the routes
+     */
+    public async routes(){
+        await createConnection({
+            type: "mysql",
+            host: process.env.DB_HOSTNAME,
+            port: 3306,
+            username: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_DATABASE,
+            synchronize: true,
+            logging: false,
+            entities: [
+                process.env.DB_ENTITIES_DIR || ''
+            ],
+            migrations: [
+                process.env.DB_MIGRATIONS_DIR || ''
+            ],
+            subscribers: [
+                process.env.DB_SUSCRIBERS_DIR || ''
+            ],
+            cli: {
+                entitiesDir: process.env.DB_CLI_ENTITIES_DIR || '',
+                migrationsDir: process.env.DB_CLI_MIGRATIONS_DIR || '',
+                subscribersDir: process.env.DB_CLI_SUSCRIBERS_DIR || ''
+            }
+        });
+
+        this.userController = new UserController();
+
+        this.app.use(`/api/users`,this.userController.router); // Configure the new routes of the controller post
+    }
+
+    /**
+     * Used to start the server
+     */
+    public async start(){
+        this.app.listen(this.app.get('port'), () => {
+            console.log(`Server is listening ${this.app.get('port')} port.`);
+        });
+    }
+
+    public async stop(){
+
+    }
 }
