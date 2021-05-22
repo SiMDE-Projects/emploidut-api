@@ -11,7 +11,6 @@ export class UserService {
     private userRepository: UserRepository;
     constructor() {
         this.userRepository = getCustomRepository(UserRepository);
-        console.log(this.userRepository);
     }
 
     public findUser = async (id: number) => {
