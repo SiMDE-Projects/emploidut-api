@@ -1,7 +1,7 @@
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
 
-export class EmploiDuTempsController {
+export class TimetableController {
     /**
      * GET courses for one student (login)
      * Expect the login in queryParams

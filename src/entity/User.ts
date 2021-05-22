@@ -1,13 +1,21 @@
-import {Entity, PrimaryColumn, Column} from "typeorm";
+import {Entity, PrimaryColumn, Column, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity()
 export class User {
 
-    @PrimaryColumn("char", { length: 36 })
-    id: String = '';
-    
-    @Column("varchar", { length: 10, nullable: true, unique: true})
+    @PrimaryGeneratedColumn("uuid")
+    id!: Number;
+
+    @Column("varchar", { length: 10, nullable: false, unique: true})
     login!: String;
+
+    firstName!: String;
+
+    lastName!: String;
+
+    email!: String;
+
+    semester!: String;
 
     @Column({default: true})
     enableConsultation: Boolean = true;

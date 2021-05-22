@@ -3,14 +3,14 @@ import { TimeSlotController } from '../src/controller/TimeSlotController';
 import { CourseController } from '../src/controller/CourseController';
 import { ExchangeController } from '../src/controller/ExchangeController';
 import { UserController } from '../src/controller/UserController';
-import { EmploiDuTempsController } from '../src/controller/EmploiDuTempsController';
+import { TimetableController } from '../src/controller/TimetableController';
 
 var router = express.Router();
 
 /*********** Route: emploidut ************/
 
 /* GET Emploidutemps. */
-router.get('/emploidut', EmploiDuTempsController.getEmploidut);
+router.get('/emploidut', TimetableController.getEmploidut);
 
 /*********** Route: timeslots ************/
 
@@ -42,10 +42,10 @@ router.put('/exchanges', ExchangeController.putExchanges);
 /*********** Route: users ************/
 
 /* GET exchange for one student (login) */
-router.get('/users', UserController.getUsers);
+router.get('/users/:id', new UserController().findOne);
 /* POST exchange for one student (login) */
-router.post('/users', UserController.postUsers);
+//router.post('/users', UserController.postUsers);
 /* PUT exchange for one student (login) */
-router.put('/users', UserController.putUsers);
+//router.put('/users', UserController.putUsers);
 
 module.exports = router;
