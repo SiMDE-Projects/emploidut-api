@@ -3,7 +3,10 @@ import {User} from "../entity/User";
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
+    
     /*
+    TODO: Add userCriteria in order to find all users with specific criteria
+
     findUsers(userCriteria: UserCriteria){
         let query = this.createQueryBuilder("user");
         let firstName = userCriteria.firstName;
@@ -58,5 +61,4 @@ export class UserRepository extends Repository<User> {
             return this.find(query);
         }
     }
-
 }
