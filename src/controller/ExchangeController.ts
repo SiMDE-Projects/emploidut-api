@@ -1,4 +1,4 @@
-import { Request, Response, Router } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 import { ExchangeService } from '../services/ExchangeService';
 
 export class ExchangeController {
@@ -22,7 +22,7 @@ export class ExchangeController {
     /**
      * GET exchange by id 
     */
-     public findOne = async (req: Request, res: Response, next?: any) => {
+     public findOne = async (req: Request, res: Response, next: NextFunction) => {
         const exchangeId = req.params.id;
         if (typeof exchangeId === undefined || exchangeId === null) {
             res.status(400).send("Error, parameter id is missing or wrong");
@@ -36,7 +36,7 @@ export class ExchangeController {
      * GET exchanges for one student (login) 
      * Expect the login in queryParams
     */
-    public getExchanges = async (req: Request, res: Response, next?: any) => {
+    public getExchanges = async (req: Request, res: Response, next: NextFunction) => {
         res.send(await this.exchangeService.findAll());
     }
 
@@ -44,11 +44,11 @@ export class ExchangeController {
      * POST exchanges for one student (login) 
      * Expect the login in queryParams
     */
-    public postExchanges = async (req: Request, res: Response, next?: any) => {}
+    public postExchanges = async (req: Request, res: Response, next: NextFunction) => {}
 
     /**
      * PUT exchanges for one student (login) 
      * Expect the login in queryParams
     */
-    public putExchanges = async (req: Request, res: Response, next?: any) => {}
+    public putExchanges = async (req: Request, res: Response, next: NextFunction) => {}
 }

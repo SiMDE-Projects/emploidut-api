@@ -9,6 +9,7 @@ import {User} from "../entity/User";
 export class UserService {
 
     private userRepository: UserRepository;
+
     constructor() {
         this.userRepository = getCustomRepository(UserRepository);
     }

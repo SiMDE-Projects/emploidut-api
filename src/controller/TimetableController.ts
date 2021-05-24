@@ -1,4 +1,4 @@
-import { Request, Response, Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
 import { TimeTableService } from "../services/TimetableService";
@@ -22,7 +22,7 @@ export class TimetableController {
      * GET courses for one student (login)
      * Expect the login in queryParams
     */
-    public getEmploidut = async (req: Request, res: Response, next?: any) => {
+    public getEmploidut = async (req: Request, res: Response, next: NextFunction) => {
         if (req.query.login) {
             const user = await getRepository(User).findOne({ id: req.query.login });
 

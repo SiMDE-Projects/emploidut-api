@@ -1,4 +1,4 @@
-import { Request, Response, Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import { getRepository } from "typeorm";
 import { Course } from "../entity/Course";
 import { CourseService } from "../services/CourseService";
@@ -24,7 +24,7 @@ export class CourseController {
      * GET courses for one student (login)
      * Expect the login in queryParams
     */
-    public getCourses = async (req: Request, res: Response, next?: any) => {
+    public getCourses = async (req: Request, res: Response, next: NextFunction) => {
 
         // Check if there is a query named course
         const courseQueryParam = req.query.course;
@@ -51,11 +51,11 @@ export class CourseController {
      * GET courses for one student (login)
      * Expect the login in queryParams
     */
-    public postCourses = async (req: Request, res: Response, next?: any) => {}
+    public postCourses = async (req: Request, res: Response, next: NextFunction) => {}
 
     /**
      * PUT courses for one student (login)
      * Expect the login in queryParams
     */
-    public putCourses = async (req: Request, res: Response, next?: any) => {}
+    public putCourses = async (req: Request, res: Response, next: NextFunction) => {}
 }

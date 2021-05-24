@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 
 require('dotenv').config()
 var createError = require('http-errors');
@@ -46,12 +46,12 @@ export class Server {
 
     private unknowRoutesConfiguration() {
         // catch 404 and forward to error handler
-        this.app.use(function(req?: any, res?: any, next?: any) {
+        this.app.use(function(req: Request, res: Response, next: NextFunction) {
             next(createError(404));
         });
 
         // error handler
-        this.app.use(function(err?: any, req?: any, res?: any, next?: any) {
+        this.app.use(function(err: any, req: Request, res: Response, next: NextFunction) {
             // set locals, only providing error in development
             res.locals.message = err.message;
             console.log(res.locals.message);

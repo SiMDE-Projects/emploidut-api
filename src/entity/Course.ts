@@ -23,9 +23,7 @@ export class Course {
     })
     type: courseType = 'CS';
 
-    @OneToMany(() => TimeSlot, timeslots => timeslots.course, {
-        eager: true
-    })
+    @OneToMany(() => TimeSlot, timeslots => timeslots.course)
     @JoinTable()
     timeslots!: TimeSlot[];
 }
