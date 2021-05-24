@@ -26,8 +26,6 @@ export class TimeSlotController {
         else{
             res?.send(await this.timeSlotService.findTimeSlot(parseInt(timeSlotId!, 10)))
         }
-        //res?.send(await getCustomRepository(UserRepository).findById(1));
-        //res?.send(await this.userService.findUser(parseInt("1")))
     }
 
     /** 

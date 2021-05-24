@@ -43,7 +43,7 @@ export class UserController {
         const timeSlotQueryParam = req.query.timeSlot;
         if(timeSlotQueryParam !== undefined && timeSlotQueryParam !== null){
             const timeSlot = await getRepository(TimeSlot).findOne({id: parseInt(String(req.query.login))});
-            console.log("TimeSlots: ", timeSlot);
+
             //Check if the user exist
             if (timeSlot !== null && timeSlot !== undefined) {
                 // Process request
@@ -58,7 +58,6 @@ export class UserController {
         const loginQueryParam = req.query.login;
         if (loginQueryParam !== undefined && loginQueryParam !== null) {
             const user = await getRepository(User).findOne({ id: loginQueryParam });
-            console.log("User by login:", user);
             res.json(user).end();
             return;
         }
