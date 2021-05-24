@@ -9,7 +9,6 @@ import {User} from "../entity/User";
 export class UserService {
 
     private userRepository: UserRepository;
-
     constructor() {
         this.userRepository = getCustomRepository(UserRepository);
     }
@@ -20,6 +19,11 @@ export class UserService {
         //console.log("test");
         //return await getRepository(User).findOne(id);
     }
+
+    //public findUsers = async (userCriteria: UserCriteria) => {
+        //const users = await this.userRepository.findUsers(userCriteria);
+        //return users;
+    //}
 
     //public async findAll()
     static async getUsersByTimeSlots (timeSlots: TimeSlot) {
