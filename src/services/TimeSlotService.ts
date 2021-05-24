@@ -8,10 +8,16 @@ import {TimeSlotRepository} from "../repository/TimeSlotRepository";
 export class TimeSlotService {
     
     private timeSlotRepository: TimeSlotRepository;
+
     constructor() {
         this.timeSlotRepository = getCustomRepository(TimeSlotRepository);
     }
 
+    /**
+     * Get time slots by id
+     * @param id 
+     * @returns timeSlot | undefined
+     */
     public findTimeSlot = async (id: number) => {
         const timeSlot = await this.timeSlotRepository.findOne(id);
         return timeSlot;
