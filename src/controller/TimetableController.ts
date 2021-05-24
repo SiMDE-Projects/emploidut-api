@@ -19,15 +19,19 @@ export class TimetableController {
     }
 
     /**
-     * GET courses for one student (login)
-     * Expect the login in queryParams
-    */
+     * GET emploidut for one student -> WIP
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     * @returns 
+     */
     public getEmploidut = async (req: Request, res: Response, next: NextFunction) => {
         if (req.query.login) {
             const user = await getRepository(User).findOne({ id: req.query.login });
 
             if (user === null || user === undefined) {
                 res.status(404).send('Sorry user not found!').end();
+                return;
             }
 
             // TODO: Add findEmploidut method 
@@ -36,6 +40,7 @@ export class TimetableController {
         } else {
             // Send error 404 error
             res.status(404).send('Parameter is missing!').end();
+            return;
         }
     }
 }

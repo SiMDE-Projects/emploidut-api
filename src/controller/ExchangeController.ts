@@ -20,8 +20,12 @@ export class ExchangeController {
     }
 
     /**
-     * GET exchange by id 
-    */
+     * GET exchange by id
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     * @returns 
+     */
      public findOne = async (req: Request, res: Response, next: NextFunction) => {
         const exchangeId = req.params.id;
         if (typeof exchangeId === undefined || exchangeId === null) {
@@ -35,20 +39,30 @@ export class ExchangeController {
     }
 
     /**
-     * GET exchanges
-    */
+     * GET all exchanges
+     * @param req Express Response
+     * @param res Express Response
+     * @param next 
+     * @returns 
+     */
     public getExchanges = async (req: Request, res: Response, next: NextFunction) => {
         res.send(await this.exchangeService.findAll());
         return;
     }
 
     /**
-     * POST exchanges
-    */
+     * POST exchange
+     * @param req Express Response
+     * @param res Express Response
+     * @param next Express NextFunction
+     */
     public postExchanges = async (req: Request, res: Response, next: NextFunction) => {}
 
     /**
-     * PUT exchanges
-    */
+     * PUT exchange
+     * @param req Express Response
+     * @param res Express Request
+     * @param next Express NextFunction
+     */
     public putExchanges = async (req: Request, res: Response, next: NextFunction) => {}
 }

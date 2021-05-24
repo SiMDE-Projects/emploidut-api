@@ -21,8 +21,12 @@ export class CourseController {
     }
 
     /**
-     * GET course by id 
-    */
+     * GET course by id
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     * @returns 
+     */
      public findOne = async (req: Request, res: Response, next: NextFunction) => {
         const courseId = req.params.id;
         if (courseId === undefined || courseId === null) {
@@ -43,8 +47,12 @@ export class CourseController {
     }
 
     /**
-     * GET courses 
-    */
+     * GET all courses
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     * @returns 
+     */
     public getCourses = async (req: Request, res: Response, next: NextFunction) => {
         // Return every courses in DB
         const courses = await this.courseService.findAll();
@@ -53,12 +61,18 @@ export class CourseController {
     }
 
     /**
-     * POST courses
-    */
+     * POST course
+     * @param req Express Request 
+     * @param res Express Response
+     * @param next Express NextFunction
+     */
     public postCourses = async (req: Request, res: Response, next: NextFunction) => {}
 
     /**
-     * PUT courses
-    */
+     * PUT course
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     */
     public putCourses = async (req: Request, res: Response, next: NextFunction) => {}
 }
