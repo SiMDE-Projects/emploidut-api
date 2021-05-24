@@ -13,13 +13,14 @@ export class TimeSlotController {
     }
 
     public routes(){
+        this.router.get('/:id', this.findOne);
         this.router.get('/', this.getTimeSlots);
         this.router.post('/', this.postTimeSlots);
         this.router.put('/', this.putTimeSlots);
     }
 
     public findOne = async (req: Request, res: Response, next: NextFunction) => {
-        const timeSlotId = req?.params.id;
+        const timeSlotId = req.params.id;
         if (typeof timeSlotId === undefined || timeSlotId === null) {
             res?.status(400).send("Error, parameter id is missing or wrong");
         }
