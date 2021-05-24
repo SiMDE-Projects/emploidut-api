@@ -2,6 +2,7 @@ import {Connection, getRepository, getConnection, getCustomRepository} from "typ
 import { TimeSlot } from "../entity/TimeSlot";
 import {UserRepository} from "../repository/UserRepository";
 import {User} from "../entity/User";
+import {UserCriteria} from "../entity/UserCriteria";
 
 /**
  * User service class
@@ -18,6 +19,11 @@ export class UserService {
         return user;
         //console.log("test");
         //return await getRepository(User).findOne(id);
+    }
+
+    public findUsers = async (userCriteria: UserCriteria) => {
+        const users = await this.userRepository.findUsers(userCriteria);
+        return users;
     }
 
     //public async findAll()

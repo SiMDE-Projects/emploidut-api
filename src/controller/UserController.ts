@@ -3,6 +3,7 @@ import { TimeSlot } from "../entity/TimeSlot";
 import { User } from "../entity/User";
 import { UserService } from "../services/UserService";
 import { Request, Response, Router } from "express";
+import {UserCriteria} from "../entity/UserCriteria";
 
 export class UserController {
 
@@ -20,6 +21,7 @@ export class UserController {
         this.router.get('/', this.getUsers);
         this.router.post('/', this.postUsers);
         this.router.put('/', this.putUsers);
+        this.router.get("/user", this.findUsers)
     }
 
     public getOneUser = async (req: Request, res: Response, next?: any) => {
@@ -31,8 +33,18 @@ export class UserController {
         else{
             res?.send(await this.userService.findUser(parseInt(userId!)))
         }
-        //res?.send(await getCustomRepository(UserRepository).findById(1));
-        //res?.send(await this.userService.findUser(parseInt("1")))
+    }
+
+    /**
+     * FIND users based on criteria
+     */
+    public findUsers = async (req: Request, res: Response) => {
+        var userCriteria = new UserCriteria();
+        res.send(await this.userService.findUsers(userCriteria));
+        /*
+        if (typeof req.query.firstName != undefined){
+            userCriteria.firstName = req.query.firstName ?? null;
+        } */
     }
 
     /**

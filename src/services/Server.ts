@@ -44,7 +44,7 @@ export class Server {
         this.app.use(cookieParser());
     }
 
-    private unknowRoutesConfiguration() {
+    private unknownRoutesConfiguration() {
         // catch 404 and forward to error handler
         this.app.use(function(req?: any, res?: any, next?: any) {
             next(createError(404));
@@ -103,7 +103,7 @@ export class Server {
         this.app.use("/api/courses", this.courseController.router);
         this.app.use("/api/timeslots", this.timeSlotController.router);
 
-        this.unknowRoutesConfiguration();
+        this.unknownRoutesConfiguration();
     }
 
     /**
