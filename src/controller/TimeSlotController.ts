@@ -19,33 +19,47 @@ export class TimeSlotController {
         this.router.put('/', this.putTimeSlots);
     }
 
+    /**
+     * GET timeSlots by id
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     */
     public findOne = async (req: Request, res: Response, next: NextFunction) => {
         const timeSlotId = req.params.id;
-        if (typeof timeSlotId === undefined || timeSlotId === null) {
-            res?.status(400).send("Error, parameter id is missing or wrong");
+        if (timeSlotId === undefined || timeSlotId === null) {
+            res.status(400).send("Error, parameter id is missing or wrong");
+            return;
         }
         else{
-            res?.send(await this.timeSlotService.findTimeSlot(parseInt(timeSlotId!, 10)))
+            res.send(await this.timeSlotService.findTimeSlot(parseInt(timeSlotId!, 10)))
+            return;
         }
     }
 
-    /** 
-     * GET timeSlots for one student (login)
-     * Expect the login in queryParams
-    */
+    /**
+     * GET timeSlots
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     */
     public getTimeSlots = async (req: Request, res: Response, next: NextFunction) => {
 
     }
 
-    /** 
-     * POST timeSlots for one student (login)
-     * Expect the login in queryParams
-    */
+    /**
+     * POST timeSlots
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     */
     public postTimeSlots = async (req: Request, res: Response, next: NextFunction) => {}
 
-    /** 
-     * PUT timeSlots for one student (login)
-     * Expect the login in queryParams
-    */
+    /**
+     * PUT timeSlots 
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     */
     public putTimeSlots = async (req: Request, res: Response, next: NextFunction) => {}
 }

@@ -22,22 +22,33 @@ export class UserController {
         this.router.put('/', this.putUsers);
     }
 
+    /**
+     * GET user by id
+     * @param req Express Request
+     * @param res 
+     * @param next 
+     * @returns 
+     */
     public findOne = async (req: Request, res: Response, next: NextFunction) => {
         const userId = req?.params.id;
-        if (typeof userId === undefined || userId === null) {
-            res?.status(400).send("Error, parameter id is missing or wrong");
+        if (userId === undefined || userId === null) {
+            res.status(400).send("Error, parameter id is missing or wrong");
+            return;
         }
         else{
-            res?.send(await this.userService.findUser(parseInt(userId!)))
+            res.send(await this.userService.findUser(parseInt(userId!)));
+            return;
         }
-        //res?.send(await getCustomRepository(UserRepository).findById(1));
-        //res?.send(await this.userService.findUser(parseInt("1")))
     }
 
     /**
-     * GET users for one student (login)
-     * Expect the login in queryParams
-    */
+     * GET users
+     * TODO: Add criteria in research
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     * @returns 
+     */
      public getUsers = async (req: Request, res: Response, next: NextFunction) => {
         // Get users by timeSlot
         const timeSlotQueryParam = req.query.timeSlot;
@@ -69,14 +80,18 @@ export class UserController {
     }
 
     /**
-     * GET users for one student (login)
-     * Expect the login in queryParams
-    */
+     * POST user
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     */
     public postUsers = async (req: Request, res: Response, next: NextFunction) => {}
 
     /**
-     * PUT users for one student (login)
-     * Expect the login in queryParams
-    */
+     * PUT user
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     */
     public putUsers = async (req: Request, res: Response, next: NextFunction) => {}
 }
