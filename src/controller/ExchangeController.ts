@@ -26,29 +26,29 @@ export class ExchangeController {
         const exchangeId = req.params.id;
         if (typeof exchangeId === undefined || exchangeId === null) {
             res.status(400).send("Error, parameter id is missing or wrong");
+            return;
         }
         else{
             res.send(await this.exchangeService.findUser(parseInt(exchangeId, 10)))
+            return;
         }
     }
 
     /**
-     * GET exchanges for one student (login) 
-     * Expect the login in queryParams
+     * GET exchanges
     */
     public getExchanges = async (req: Request, res: Response, next: NextFunction) => {
         res.send(await this.exchangeService.findAll());
+        return;
     }
 
     /**
-     * POST exchanges for one student (login) 
-     * Expect the login in queryParams
+     * POST exchanges
     */
     public postExchanges = async (req: Request, res: Response, next: NextFunction) => {}
 
     /**
-     * PUT exchanges for one student (login) 
-     * Expect the login in queryParams
+     * PUT exchanges
     */
     public putExchanges = async (req: Request, res: Response, next: NextFunction) => {}
 }

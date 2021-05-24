@@ -13,11 +13,20 @@ export class ExchangeService {
         this.exchangeRepository = getCustomRepository(ExchangeRepository);
     }
 
+    /**
+     * Find exchange by id
+     * @param id 
+     * @returns Exchange | undefined
+     */
     public findUser = async (id: number) => {
         const exchange = await this.exchangeRepository.findOneWithRelations(id);
         return exchange;
     }
 
+    /**
+     * Find all exchanges
+     * @returns Exchange[] | undefined
+     */
     public findAll = async () => {
         const exchanges = await this.exchangeRepository.findWithRelations();
         return exchanges;
