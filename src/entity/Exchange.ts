@@ -21,24 +21,16 @@ export class Exchange {
     })
     status?: exchangeStatus = 'PENDING';
 
-    @ManyToOne(() => TimeSlot, timeSlot => timeSlot.id, {
-        eager: true
-    })
+    @ManyToOne(() => TimeSlot, timeSlot => timeSlot.id)
     exchangedTimeslot?: TimeSlot;
 
-    @ManyToOne(() => TimeSlot, timeSlot => timeSlot.id, {
-        eager: true
-    })
+    @ManyToOne(() => TimeSlot, timeSlot => timeSlot.id)
     desiredTimeslot?: TimeSlot;
 
-    @ManyToOne(() => User, user => user.id, {
-        eager: true
-    })
+    @ManyToOne(() => User, user => user.id)
     suggesterStudent?: User;
 
-    @ManyToOne(() => User, user => user.id, {
-        eager: true
-    })
+    @ManyToOne(() => User, user => user.id)
     aimStudent?: User;
 
     /**
