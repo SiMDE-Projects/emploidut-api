@@ -2,7 +2,7 @@ import { getRepository } from "typeorm";
 import { TimeSlot } from "../entity/TimeSlot";
 import { User } from "../entity/User";
 import { UserService } from "../services/UserService";
-import { Request, Response, Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 
 export class UserController {
 
@@ -16,14 +16,13 @@ export class UserController {
     }
 
     public routes(){
-        this.router.get('/:id', this.getOneUser);
+        this.router.get('/:id', this.findOne);
         this.router.get('/', this.getUsers);
         this.router.post('/', this.postUsers);
         this.router.put('/', this.putUsers);
     }
 
-    public getOneUser = async (req: Request, res: Response, next?: any) => {
-
+    public findOne = async (req: Request, res: Response, next: NextFunction) => {
         const userId = req?.params.id;
         if (typeof userId === undefined || userId === null) {
             res?.status(400).send("Error, parameter id is missing or wrong");
@@ -39,7 +38,7 @@ export class UserController {
      * GET users for one student (login)
      * Expect the login in queryParams
     */
-     public getUsers = async (req: Request, res: Response, next?: any) => {
+     public getUsers = async (req: Request, res: Response, next: NextFunction) => {
         // Get users by timeSlot
         const timeSlotQueryParam = req.query.timeSlot;
         if(timeSlotQueryParam !== undefined && timeSlotQueryParam !== null){
@@ -74,11 +73,11 @@ export class UserController {
      * GET users for one student (login)
      * Expect the login in queryParams
     */
-    public postUsers = async (req: Request, res: Response, next?: any) => {}
+    public postUsers = async (req: Request, res: Response, next: NextFunction) => {}
 
     /**
      * PUT users for one student (login)
      * Expect the login in queryParams
     */
-    public putUsers = async (req: Request, res: Response, next?: any) => {}
+    public putUsers = async (req: Request, res: Response, next: NextFunction) => {}
 }

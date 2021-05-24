@@ -1,4 +1,4 @@
-import { Request, Response, Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import { TimeSlot } from "../entity/TimeSlot";
 import { TimeSlotService } from "../services/TimeSlotService";
 
@@ -23,17 +23,17 @@ export class TimeSlotController {
      * GET timeSlots for one student (login)
      * Expect the login in queryParams
     */
-    public getTimeSlots = async (req: Request, res: Response, next?: any) => {}
+    public getTimeSlots = async (req: Request, res: Response, next: NextFunction) => {}
 
     /** 
      * POST timeSlots for one student (login)
      * Expect the login in queryParams
     */
-    public postTimeSlots = async (req: Request, res: Response, next?: any) => {}
+    public postTimeSlots = async (req: Request, res: Response, next: NextFunction) => {}
 
     /** 
      * PUT timeSlots for one student (login)
      * Expect the login in queryParams
     */
-    public putTimeSlots = async (req: Request, res: Response, next?: any) => {}
+    public putTimeSlots = async (req: Request, res: Response, next: NextFunction) => {}
 }
