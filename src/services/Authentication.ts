@@ -21,7 +21,7 @@ var oauth2 = new OAuth.OAuth2(
 var authURL = oauth2.getAuthorizeUrl({
     response_type: 'code',
     redirect_uri: redirectURL, // TODO: Add the real rediction
-    scope: ['user-get-info user-get-assos user-get-roles'],
+    scope: ['user-get-info user-get-roles'],
     state: ''
 });
 
