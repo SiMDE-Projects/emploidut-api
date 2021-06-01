@@ -1,30 +1,68 @@
-import { Exchange } from './../entity/Exchange';
+import { NextFunction, Request, Response, Router } from 'express';
+import { ExchangeService } from '../services/ExchangeService';
 
 export class ExchangeController {
-    /**
-     * GET exchanges for one student (login) 
-     * Expect the login in queryParams
-    */
-    public static getExchanges = async (req?: any, res?: any, next?: any) => {
-        const exchange = new Exchange();
-        res.send(`user : ${req.query.login}, login : ${exchange.id}`);
+
+    private exchangeService: ExchangeService;
+    public router: Router;
+
+    constructor() {
+        this.exchangeService = new ExchangeService();
+        this.router = Router();
+        this.routes();
+    }
+
+    public routes(){
+        this.router.get('/:id', this.findOne);
+        this.router.get('/', this.getExchanges);
+        this.router.post('/', this.postExchanges);
+        this.router.put('/', this.putExchanges);
     }
 
     /**
-     * POST exchanges for one student (login) 
-     * Expect the login in queryParams
-    */
-     public static postExchanges = async (req?: any, res?: any, next?: any) => {
-        const exchange = new Exchange();
-        res.send(`user : ${req.query.login}, login : ${exchange.id}`);
+     * GET exchange by id
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     * @returns 
+     */
+     public findOne = async (req: Request, res: Response, next: NextFunction) => {
+        const exchangeId = req.params.id;
+        if (typeof exchangeId === undefined || exchangeId === null) {
+            res.status(400).send("Error, parameter id is missing or wrong");
+            return;
+        }
+        else{
+            res.send(await this.exchangeService.findUser(parseInt(exchangeId, 10)))
+            return;
+        }
     }
 
     /**
-     * PUT exchanges for one student (login) 
-     * Expect the login in queryParams
-    */
-    public static putExchanges = async (req?: any, res?: any, next?: any) => {
-        const exchange = new Exchange();
-        res.send(`user : ${req.query.login}, login : ${exchange.id}`);
+     * GET all exchanges
+     * @param req Express Response
+     * @param res Express Response
+     * @param next 
+     * @returns 
+     */
+    public getExchanges = async (req: Request, res: Response, next: NextFunction) => {
+        res.send(await this.exchangeService.findAll());
+        return;
     }
+
+    /**
+     * POST exchange
+     * @param req Express Response
+     * @param res Express Response
+     * @param next Express NextFunction
+     */
+    public postExchanges = async (req: Request, res: Response, next: NextFunction) => {}
+
+    /**
+     * PUT exchange
+     * @param req Express Response
+     * @param res Express Request
+     * @param next Express NextFunction
+     */
+    public putExchanges = async (req: Request, res: Response, next: NextFunction) => {}
 }

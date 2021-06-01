@@ -1,24 +1,27 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import {Entity, PrimaryColumn, Column, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity()
 export class User {
-
     @PrimaryGeneratedColumn()
-    id: number;
+    id!: Number;
 
-    @Column()
-    firstName: string;
+    @Column("varchar", { length: 10, nullable: false, unique: true})
+    login!: String;
 
-    @Column()
-    lastName: string;
+    @Column({default: true})
+    enableConsultation: Boolean = true;
 
-    @Column()
-    age: number;
+    @Column({default: true})
+    enableViewing: Boolean = true;
+    
+    /**
+     * These properties come from the portail
+     */
+    firstName!: String;
 
-    public constructor(id =0, age =0, firstName = '', lastName = '',) {
-        this.id = id;
-        this.age = age;
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
+    lastName!: String;
+
+    email!: String;
+
+    semester!: String;
 }

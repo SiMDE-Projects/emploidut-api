@@ -1,17 +1,29 @@
-import { Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, PrimaryColumn , Column, OneToMany, JoinTable } from "typeorm";
+import { TimeSlot } from "./TimeSlot";
+
+export type courseType = 'CS' | 'TM' | 'TSH';
 
 /**
  * Initial class for one course
  * @class Course
  */
 @Entity()
-export class Course {    
-    @PrimaryGeneratedColumn()
-    id: number = 0;
+export class Course {
+  
+    @PrimaryColumn()
+    id: String = '';
 
-    /**
-     * Constructor for Course
-     */
-    constructor () {
-    }
+    @Column("varchar")
+    name: String = '';
+
+    @Column({
+        type: "enum",
+        enum: ["CS" , "TM" , "TSH"],
+        default: "CS"
+    })
+    type: courseType = 'CS';
+
+    @OneToMany(() => TimeSlot, timeslots => timeslots.course)
+    @JoinTable()
+    timeslots!: TimeSlot[];
 }
