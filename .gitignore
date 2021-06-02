@@ -15,3 +15,8 @@ js/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# IDE
+.DS_Store
+.idea
+.idea/*
