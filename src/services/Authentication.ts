@@ -76,18 +76,16 @@ export const authenticationFilter = async function (req: Request, res: Response,
                 'redirect_uri': redirectURL,
                 'grant_type':'authorization_code'
             },
-            function (err:any, access_token:any, refresh_token:any, results:any){
+            async function (err:any, access_token:any, refresh_token:any, results:any){
                 if (err) {
                     console.log(err);
-                    res.end(err);
-                    return;
+                    return res.status(500).send('Internal Server Error');
                 } else if (results.error) {
                     console.log(results);
-                    res.end(JSON.stringify(results));
+                    return res.status(500).send('Internal Server Error');
                 }
                 else {
                     console.log('Obtained access_token: ', access_token);
-                    res.end(access_token);
 
                     // Get information from the connected user
                     axios({
@@ -101,14 +99,14 @@ export const authenticationFilter = async function (req: Request, res: Response,
                     }).then(function (response:any) {
                         // Print user information
                         console.log(response.data);
+                        next();
                     }).catch(function (err:any) {
                         console.error(err);
+                        return res.status(500).send('Internal Server Error');
+
                     });
                 }
             }
         );
     }
-
-    // Send the request to next server's middlware
-    next();
 };
