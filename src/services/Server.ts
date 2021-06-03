@@ -115,7 +115,5 @@ export class Server {
         });
     }
 
-    public async stop(){
-
-    }
+    public async stop(){}
 }
