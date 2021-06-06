@@ -2,10 +2,8 @@ import { NextFunction, Request, Response } from "express";
 
 var OAuth = require('oauth');
 var axios = require('axios');
-/**
- * Create var for the authentication middleware
-*/
 
+// Create var for the authentication middleware
 const portailURL = process.env.AUTH_PORTAIL_URL;
 const redirectURL = process.env.AUTH_REDIRECT_URL;
 
@@ -26,9 +24,7 @@ var authURL = oauth2.getAuthorizeUrl({
 });
 
 export const authenticationFilter = async function (req: Request, res: Response, next: NextFunction) {
-    /**
-     * Check if the request contains a valid token
-     */
+    //Check if the request contains a valid token
     let token = req.header('authorization');
     if (token !== null && token !== undefined && token !== '') {
         // Chek if we receive a Bearer token
@@ -60,9 +56,7 @@ export const authenticationFilter = async function (req: Request, res: Response,
         return;
     }
 
-    /**
-     * Check if the request has query parameters named code
-     */
+    // Check if the request has query parameters named code
     const authorizationCode = req.query.code;
 
     if (authorizationCode === null || authorizationCode === undefined || authorizationCode === '') {
@@ -103,7 +97,6 @@ export const authenticationFilter = async function (req: Request, res: Response,
                     }).catch(function (err:any) {
                         console.error(err);
                         return res.status(500).send('Internal Server Error');
-
                     });
                 }
             }
