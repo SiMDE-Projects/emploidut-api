@@ -3,8 +3,9 @@
 # dependencies
 /node_modules
 
-# Compilde code from .ts files with tsc
+# Compile code from .ts files with tsc
 js/
+logs/
 
 # .env file
 .env
