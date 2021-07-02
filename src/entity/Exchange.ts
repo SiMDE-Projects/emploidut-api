@@ -2,7 +2,11 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { TimeSlot } from "./TimeSlot";
 import { User } from "./User";
 
-export type exchangeStatus = 'PENDING' | 'ACCEPTED' | 'VALIDATED';
+export enum exchangeStatus {
+    'PENDING' = 'PENDING',
+    'ACCEPTED' ='ACCEPTED',
+    'VALIDATED' ='VALIDATED'
+};
 
 /**
  * Initial class which handles all the course's exchanges
@@ -19,7 +23,7 @@ export class Exchange {
         enum: ["PENDING" , "ACCEPTED" , "VALIDATED"],
         default: "PENDING"
     })
-    status?: exchangeStatus = 'PENDING';
+    status?: String = exchangeStatus.PENDING;
 
     @ManyToOne(() => TimeSlot, timeSlot => timeSlot.id)
     exchangedTimeslot?: TimeSlot;
