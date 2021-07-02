@@ -1,7 +1,11 @@
 import { Entity, PrimaryColumn , Column, OneToMany, JoinTable } from "typeorm";
 import { TimeSlot } from "./TimeSlot";
 
-export type courseType = 'CS' | 'TM' | 'TSH';
+export enum courseType {
+    'CS' = 'CS',
+    'TM' = 'TM',
+    'TSH' = 'TSH'
+}
 
 /**
  * Initial class for one course
@@ -21,7 +25,7 @@ export class Course {
         enum: ["CS" , "TM" , "TSH"],
         default: "CS"
     })
-    type: courseType = 'CS';
+    type: String = courseType.CS;
 
     @OneToMany(() => TimeSlot, timeslots => timeslots.course)
     @JoinTable()
