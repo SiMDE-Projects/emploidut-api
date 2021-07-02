@@ -20,7 +20,6 @@ export class Server {
     private courseController?: CourseController;
     private timeSlotController?: TimeSlotController;
 
-
     constructor(){
         this.app = express(); // init the application
         this.configuration();
