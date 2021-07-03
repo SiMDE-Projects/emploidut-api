@@ -11,6 +11,7 @@ import { UserController } from "../controller/UserController";
 import { ExchangeController } from "../controller/ExchangeController";
 import { CourseController } from "../controller/CourseController";
 import { TimeSlotController } from "../controller/TimeSlotController";
+import { authenticationFilter } from "./Authentication";
 
 export class Server {
     private app: express.Application;
@@ -42,6 +43,8 @@ export class Server {
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: false }));
         this.app.use(cookieParser());
+
+        this.app.all('*', authenticationFilter);
     }
 
     private unknowRoutesConfiguration() {
