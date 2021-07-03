@@ -1,4 +1,5 @@
 import {getCustomRepository} from "typeorm";
+import { TimeSlotCriteria } from "../entity/TimeSlot";
 import {TimeSlotRepository} from "../repository/TimeSlotRepository";
 import CallBack from "./FunctionStatusCode";
 import Logger from "./Logger";
@@ -17,11 +18,43 @@ export class TimeSlotService {
     /**
      * Get time slots by id
      * @param id 
-     * @returns timeSlot | undefined
+     * @returns TimeSlot | undefined | null
      */
     public findTimeSlot = async (id: number) => {
-        const timeSlot = await this.timeSlotRepository.findOne(id);
-        return timeSlot;
+        try {
+            const timeSlot = await this.timeSlotRepository.findById(id);
+            return timeSlot;
+        } catch (err) {
+            Logger.error(err);
+            return null;
+        }
+    }
+
+    /**
+     * Get TimeSlots by criteria
+     * @param criteria TimeSlotCriteria
+     */
+     public findByCriteria = async (criteria: TimeSlotCriteria) => {
+        try {
+            const timeSlots = await this.timeSlotRepository.findByCriteria(criteria);
+            return timeSlots;
+        } catch (err) {
+            Logger.error(err);
+            return [];
+        }
+    }
+
+    /**
+     * Get all TimeSlots
+     */
+    public findAll = async () => {
+        try {
+            const timeSlots = await this.timeSlotRepository.findAll();
+            return timeSlots;
+        } catch (err) {
+            Logger.error(err);
+            return [];
+        }
     }
 
     /**

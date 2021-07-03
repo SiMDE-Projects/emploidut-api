@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { check, ValidationError, validationResult } from "express-validator";
-import { TimeSlot, timeSlotType, frequencyType, dayType } from "../entity/TimeSlot";
+import { TimeSlot, timeSlotType, frequencyType, TimeSlotCriteria } from "../entity/TimeSlot";
 import CallBack from "../services/FunctionStatusCode";
 import Logger from "../services/Logger";
 import { TimeSlotService } from "../services/TimeSlotService";
@@ -96,6 +96,20 @@ export class TimeSlotController {
      */
     public getTimeSlots = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('GET TimeSolts');
+        const queryParams = req.query;
+        if (queryParams !== undefined || queryParams !== null) {
+            Logger.debug('GET TimeSolts by criteria');
+            const criteria = new TimeSlotCriteria(queryParams);
+            const timeSlots = await this.timeSlotService.findByCriteria(criteria);
+            res.json(timeSlots).end();
+            return;
+        } else {
+            Logger.debug('GET all TimeSolts');
+            // Get all users 
+            const timeSlots = await this.timeSlotService.findAll();
+            res.json(timeSlots).end();
+            return;
+        }
     }
 
     /**
