@@ -27,6 +27,16 @@ export class UserService {
     }
 
     /**
+     * Find user by login
+     * @param login
+     * @returns User | undefined
+     */
+     public findByLogin = async (login: String) => {
+        const user = await this.userRepository.findByLogin(login);
+        return user;
+    }
+
+    /**
      * Find all users
      * @param userCriteria 
      * @returns User[] | undefined
