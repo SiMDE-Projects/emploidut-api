@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import Logger from "./Logger";
 
 var OAuth = require('oauth');
 var axios = require('axios');
@@ -24,7 +25,7 @@ var authURL = oauth2.getAuthorizeUrl({
 });
 
 export const authenticationFilter = async function (req: Request, res: Response, next: NextFunction) {
-    //Check if the request contains a valid token
+    // Check if the request contains a valid token
     let token = req.header('authorization');
     if (token !== null && token !== undefined && token !== '') {
         // Chek if we receive a Bearer token
@@ -63,7 +64,7 @@ export const authenticationFilter = async function (req: Request, res: Response,
         // Handle redirection (the user is not connected with oauth2 yet)
         return res.redirect(authURL);
     } else {
-        /** Obtaining access_token */
+        // Obtaining access_token
         oauth2.getOAuthAccessToken(
             authorizationCode,
             {
@@ -72,14 +73,14 @@ export const authenticationFilter = async function (req: Request, res: Response,
             },
             async function (err:any, access_token:any, refresh_token:any, results:any){
                 if (err) {
-                    console.log(err);
+                    Logger.error(err);
                     return res.status(500).send('Internal Server Error');
                 } else if (results.error) {
-                    console.log(results);
+                    Logger.error(results);
                     return res.status(500).send('Internal Server Error');
                 }
                 else {
-                    console.log('Obtained access_token: ', access_token);
+                    Logger.debug(`Obtained access_token:  ${access_token}`);
 
                     // Get information from the connected user
                     axios({
@@ -92,7 +93,7 @@ export const authenticationFilter = async function (req: Request, res: Response,
                         }
                     }).then(function (response:any) {
                         // Print user information
-                        console.log(response.data);
+                        Logger.debug(response.data);
                         next();
                     }).catch(function (err:any) {
                         console.error(err);

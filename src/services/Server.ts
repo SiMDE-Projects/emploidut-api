@@ -4,7 +4,6 @@ require('dotenv').config()
 var createError = require('http-errors');
 var path = require('path');
 var cookieParser = require('cookie-parser');
-var logger = require('morgan');
 
 import { createConnection}  from "typeorm";
 import { UserController } from "../controller/UserController";
@@ -12,6 +11,7 @@ import { ExchangeController } from "../controller/ExchangeController";
 import { CourseController } from "../controller/CourseController";
 import { TimeSlotController } from "../controller/TimeSlotController";
 import { authenticationFilter } from "./Authentication";
+import Logger, { loggerMiddleware } from "./Logger";
 
 export class Server {
     private app: express.Application;
@@ -39,7 +39,7 @@ export class Server {
         this.app.set('views', path.resolve('./', './views'));
         this.app.set('view engine', 'pug');
 
-        this.app.use(logger('dev'));
+        this.app.use(loggerMiddleware);
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: false }));
         this.app.use(cookieParser());
@@ -57,7 +57,7 @@ export class Server {
         this.app.use(function(err: any, req: Request, res: Response, next: NextFunction) {
             // set locals, only providing error in development
             res.locals.message = err.message;
-            console.log(res.locals.message);
+            Logger.info(res.locals.message);
             res.locals.error = req.app.get('env') === 'development' ? err : {};
 
             // render the error page
@@ -114,7 +114,7 @@ export class Server {
      */
     public async start(){
         this.app.listen(this.app.get('port'), () => {
-            console.log(`Server is listening ${this.app.get('port')} port.`);
+            Logger.info(`Server is listening ${this.app.get('port')} port.`);
         });
     }
 
