@@ -25,6 +25,28 @@ export enum dayType {
 }
 
 /**
+ * Criteria which can be used in GET requests
+ */
+export class TimeSlotCriteria {
+    course?: String;
+    type?: String;
+    roomNumber?: number;
+    startAt?: String;
+    endAt?: String;
+
+    // Serialize from object to class
+    constructor(queryPrams: any) {
+        if (queryPrams.course !== undefined || queryPrams.course !== null) {this.course = queryPrams.course;}
+        if (queryPrams.type !== undefined || queryPrams.type !== null) {this.type = queryPrams.type;}
+        if (queryPrams.roomNumber !== undefined || queryPrams.roomNumber !== null) {
+            this.roomNumber = queryPrams.roomNumber;
+        }
+        if (queryPrams.startAt !== undefined || queryPrams.startAt !== null) {this.startAt = queryPrams.startAt;}
+        if (queryPrams.endAt !== undefined || queryPrams.endAt !== null) {this.endAt = queryPrams.endAt;}
+    }
+}
+
+/**
  * Initial class for course's TimeSlot
  * @class TimeSlot
  */
