@@ -54,6 +54,7 @@ export const authenticationFilter = async function (req: Request, res: Response,
         }
 
         // Send the request to next server's middlware
+        res.locals.user = responseAxios.data;
         next();
         return;
     }
