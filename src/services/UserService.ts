@@ -42,7 +42,7 @@ export class UserService {
 
     /**
      * Find user by login
-     * @param id 
+     * @param login
      * @returns User | undefined
      */
      public findByLogin = async (login: String) => {
