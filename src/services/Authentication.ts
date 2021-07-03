@@ -48,11 +48,12 @@ export const authenticationFilter = async function (req: Request, res: Response,
             return response;
         });
 
-        if ( responseAxios.status !== 200) {
+        if (responseAxios.status !== 200) {
             return res.redirect(authURL);
         }
 
         // Send the request to next server's middlware
+        res.locals.user = responseAxios.data;
         next();
         return;
     }
