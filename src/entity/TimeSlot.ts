@@ -1,5 +1,6 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Course } from "./Course";
+import { User } from "./User";
 
 export enum timeSlotType {
     'Cours' = 'Cours',
@@ -72,4 +73,7 @@ export class TimeSlot {
     })
     frequency: String = frequencyType.Weekly;
 
+    @ManyToMany(() => User)
+    @JoinTable({ name: 'timeslot_inscriptions' })
+    users!: User[];
 }
