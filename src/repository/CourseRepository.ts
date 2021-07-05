@@ -4,19 +4,19 @@ import { User } from "../entity/User";
 
 @EntityRepository(Course)
 export class CourseRepository extends Repository<Course> {
-    findById(id: string) {
+    findById(id: String){
         return this.createQueryBuilder("course")
             .where("course.id = :id", { id})
             .getOne()
     }
 
-    findByName(name: string) {
+    findByName(name: String){
         return this.createQueryBuilder("course")
             .where("course.id = :id", { name})
             .getOne()
     }
 
-    findByCourseType(courseType: string) {
+    findByCourseType(courseType: String){
         return this.createQueryBuilder("course")
             .where("course.courseType = :id", { courseType})
             .getMany()
