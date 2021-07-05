@@ -18,6 +18,7 @@ export class CourseController {
 
     public routes(){
         this.router.get('/:id', this.findOne);
+        this.router.get('/:id/users', this.findUsers);
         this.router.get('/', this.getCourses);
         this.router.post(
             '/',
@@ -59,7 +60,7 @@ export class CourseController {
         }
         else {
             const course = await this.courseService.findOne(courseId);
-            if (course === undefined  || course === null) {
+            if (course === undefined) {
                 // Send 404 error
                 res.status(404).send('Entity not found').end();
                 return;
@@ -67,6 +68,27 @@ export class CourseController {
 
             // Send course found
             res.send(course).end();
+            return;
+        }
+    }
+
+    /**
+     * GET users from course's id
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     * @returns 
+     */
+     public findUsers = async (req: Request, res: Response, next: NextFunction) => {
+        Logger.debug('GET Users from one Course');
+        const courseId = req.params.id;
+        if (courseId === undefined || courseId === null) {
+            res.status(400).send("Error, parameter id is missing or wrong").end();
+            return;
+        }
+        else {
+            const users = await this.courseService.findUsers(courseId);
+            res.send(users).end();
             return;
         }
     }

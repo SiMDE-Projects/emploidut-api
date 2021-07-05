@@ -1,4 +1,5 @@
 import {EntityRepository, Repository} from "typeorm";
+import { Course } from "../entity/Course";
 import {User} from "../entity/User";
 
 @EntityRepository(User)
@@ -60,5 +61,12 @@ export class UserRepository extends Repository<User> {
             let query = {where: idsWhere}
             return this.find(query);
         }
+    }
+
+    findUsersByCourse(id: String){
+        return this.createQueryBuilder().distinct()
+            .innerJoin(Course, "course", "course.id = :id", { id})
+            .innerJoin("course.timeslots", "timeslots")
+            .getMany();
     }
 }
