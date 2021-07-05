@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { Course } from "./Course";
+import { User } from "./User";
 
 export enum timeSlotType {
     'Cours' = 'Cours',
