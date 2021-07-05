@@ -7,6 +7,7 @@ export class TimeSlotRepository extends Repository<TimeSlot> {
     findById(id: number){
         return this.createQueryBuilder('timeSlots')
             .innerJoinAndSelect('timeSlots.course', 'course')
+            .innerJoinAndSelect("timeSlots.users", "user")
             .where("timeSlots.id = :id", { id })
             .getOne()
     }
@@ -30,6 +31,7 @@ export class TimeSlotRepository extends Repository<TimeSlot> {
     findAll() {
         return this.createQueryBuilder('timeSlots')
             .innerJoinAndSelect('timeSlots.course', 'course')
+            .innerJoinAndSelect("timeSlots.users", "user")
             .getMany()
     }
 
@@ -56,6 +58,9 @@ export class TimeSlotRepository extends Repository<TimeSlot> {
             query = query.andWhere("timeSlots.endAt = :endAt", { endAt });
         }
 
-        return query.innerJoinAndSelect('timeSlots.course', 'course').getMany();
+        return query
+            .innerJoinAndSelect("timeSlots.users", "user")
+            .innerJoinAndSelect('timeSlots.course', 'course')
+            .getMany();
     }
 }

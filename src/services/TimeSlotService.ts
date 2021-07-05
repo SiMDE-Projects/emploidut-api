@@ -31,6 +31,26 @@ export class TimeSlotService {
     }
 
     /**
+     * Get users by timeSlot' id
+     * @param id 
+     * @returns TimeSlot | undefined | null
+     */
+     public findUsers = async (id: number) => {
+        try {
+            const timeSlot = await this.timeSlotRepository.findById(id);
+            if (timeSlot !== undefined) {
+                return timeSlot.users;
+            } else {
+                Logger.warn("TimeSlot not found");
+                return [];
+            }
+        } catch (err) {
+            Logger.error(err);
+            return null;
+        }
+    }
+
+    /**
      * Get TimeSlots by criteria
      * @param criteria TimeSlotCriteria
      */
