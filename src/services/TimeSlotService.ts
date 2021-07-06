@@ -78,6 +78,20 @@ export class TimeSlotService {
     }
 
     /**
+     * Get TimeSlots by course's id
+     */
+     public findTimeSlotByCourse = async (courseId: String) => {
+        try {
+            const timeSlots = await this.timeSlotRepository.findTimeSlotByCourse(courseId);
+            return timeSlots;
+        } catch (err) {
+            Logger.error(err);
+            return [];
+        }
+    }
+
+
+    /**
      * Create a new TimeSlot entity
      * @param body Validated body of the request
      * @returns Status code
