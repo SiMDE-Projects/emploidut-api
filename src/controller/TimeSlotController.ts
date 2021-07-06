@@ -19,6 +19,7 @@ export class TimeSlotController {
         this.router.get('/:id', this.findOne);
         this.router.get('/:id/users', this.findUsers);
         this.router.get('/', this.getTimeSlots);
+        this.router.get('/course/:id', this.getCourseTimeSlots);
         this.router.post(
             '/',
             [
@@ -127,6 +128,24 @@ export class TimeSlotController {
             // Get all users 
             const timeSlots = await this.timeSlotService.findAll();
             res.json(timeSlots).end();
+            return;
+        }
+    }
+
+    /**
+     * GET timeSlots by course's id
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     */
+     public getCourseTimeSlots = async (req: Request, res: Response, next: NextFunction) => {
+        Logger.debug('GET Course by TimeSolt');
+        const courseId = req.params.id;
+        if (courseId === undefined || courseId === null || courseId === '') {
+            res.status(400).send("Error, parameter id is missing or wrong");
+            return;
+        } else {
+            res.send(await this.timeSlotService.findTimeSlotByCourse(courseId));
             return;
         }
     }
