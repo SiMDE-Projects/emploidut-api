@@ -2,6 +2,8 @@ import {Connection, getRepository, getConnection, getCustomRepository} from "typ
 import { TimeSlot } from "../entity/TimeSlot";
 import {UserRepository} from "../repository/UserRepository";
 import {User} from "../entity/User";
+import Logger from "./Logger";
+import CallBack from "./FunctionStatusCode";
 
 /**
  * User service class
@@ -45,5 +47,67 @@ export class UserService {
         //     select: ["users"],
         // });
         return [];
+    }
+
+    /**
+     * Create a new user entity
+     * @param body Validated body of the request
+     * @returns Status code
+     */
+     public create = async (body: Object) => {
+        try {
+            const user = await this.userRepository.save(body);
+            if (user !== undefined || user !== null) {
+                // Success
+                return CallBack.Status.SUCCESS;
+            }
+
+            // Error while creating the new user (the user already exists)
+            return CallBack.Status.FAILURE;
+        } catch (err) {
+            Logger.error(err);
+            return CallBack.Status.DB_ERROR;
+        }
+    }
+
+    /**
+     * Update one User
+     * @param body Validated body of the request
+     * @returns Status code
+     */
+     public update = async (body: Object, id: number) => {
+        try {
+            const user = await this.userRepository.findOne(id);
+            if (user !== undefined) {
+                this.userRepository.merge(user, body);
+                const userResult = await this.userRepository.save(user);
+                if (userResult !== undefined || userResult !== null) {
+                    // Success
+                    return CallBack.Status.SUCCESS;
+                }
+
+                // Error while creating the new user (the user already exists)
+                return CallBack.Status.FAILURE;
+            }
+            return CallBack.Status.LOGIC_ERROR;
+        } catch (err) {
+            Logger.error(err);
+            return CallBack.Status.DB_ERROR;
+        }
+    }
+
+    /**
+     * 
+     * @param id User's id to delete
+     * @returns Status code
+     */
+    public delete = async (id: number) => {
+        try {
+            const results = await this.userRepository.delete(id);
+            return results.affected;
+        }  catch (err) {
+            Logger.error(err);
+            return CallBack.Status.DB_ERROR;
+        }
     }
 }

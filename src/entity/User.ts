@@ -1,4 +1,4 @@
-import {Entity, PrimaryColumn, Column, PrimaryGeneratedColumn} from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity()
 export class User {
@@ -13,7 +13,7 @@ export class User {
 
     @Column({default: true})
     enableViewing: Boolean = true;
-    
+
     /**
      * These properties come from the portail
      */

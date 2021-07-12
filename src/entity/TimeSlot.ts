@@ -1,8 +1,18 @@
-import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
-import {Course, courseType} from "./Course";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Course } from "./Course";
 
-export type timeSlotType = 'Cours' | 'TD' | 'TP';
-export type frequency = 'Weekly' | 'A' | 'B';
+export enum timeSlotType {
+    'Cours' = 'Cours',
+    'TD' = 'TD',
+    'TP' = 'TP'
+}
+
+export enum frequencyType {
+    'Weekly' = 'Weekly',
+    'A' = 'A',
+    'B' = 'B',
+    'Monthly' = 'Monthly'
+}
 
 /**
  * Initial class for course's TimeSlot
@@ -22,7 +32,7 @@ export class TimeSlot {
         enum: ["Cours" , "TD" , "TP"],
         default: "Cours"
     })
-    type: timeSlotType = 'Cours';
+    type: String = timeSlotType.Cours;
 
     @Column("varchar", { length: 20})
     roomNumber!: String
@@ -35,9 +45,9 @@ export class TimeSlot {
 
     @Column({
         type: "enum",
-        enum: ["Weekly" , "A" , "B"],
+        enum: ["Weekly" , "A" , "B", "Monthly"],
         default: "Weekly"
     })
-    frequency: frequency = 'Weekly';
+    frequency: String = frequencyType.Weekly;
 
 }
