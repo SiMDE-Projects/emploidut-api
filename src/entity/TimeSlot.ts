@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { Course } from "./Course";
 
 export enum timeSlotType {
@@ -14,11 +14,22 @@ export enum frequencyType {
     'Monthly' = 'Monthly'
 }
 
+export enum dayType {
+    'Monday' = 'Monday',
+    'Tuesday' = 'Tuesday',
+    'Wednesday' = 'Wednesday',
+    'Thursday' = 'Thursday',
+    'Friday' = 'Friday',
+    'Saturday' = 'Saturday',
+    'Sunday' = 'Sunday',
+}
+
 /**
  * Initial class for course's TimeSlot
  * @class TimeSlot
  */
 @Entity()
+@Unique(["roomNumber", "startAt", "endAt", "day"])
 export class TimeSlot {
 
     @PrimaryGeneratedColumn()
@@ -45,9 +56,15 @@ export class TimeSlot {
 
     @Column({
         type: "enum",
+        enum: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        default: "Sunday"
+    })
+    day: String = dayType.Sunday;
+
+    @Column({
+        type: "enum",
         enum: ["Weekly" , "A" , "B", "Monthly"],
         default: "Weekly"
     })
     frequency: String = frequencyType.Weekly;
-
 }

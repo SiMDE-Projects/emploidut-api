@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { check, ValidationError, validationResult } from "express-validator";
-import { TimeSlot, timeSlotType, frequencyType } from "../entity/TimeSlot";
+import { TimeSlot, timeSlotType, frequencyType, dayType } from "../entity/TimeSlot";
 import CallBack from "../services/FunctionStatusCode";
 import Logger from "../services/Logger";
 import { TimeSlotService } from "../services/TimeSlotService";
@@ -41,6 +41,11 @@ export class TimeSlotController {
                     .exists().withMessage('Field "type" is missing')
                     .custom((value: String) => {
                         return (Object.values(frequencyType) as String[]).includes(value);
+                    }).trim().escape(),
+                check('day')
+                    .exists().withMessage('Field "day" is missing')
+                    .custom((value: String) => {
+                        return (Object.values(dayType) as String[]).includes(value);
                     }).trim().escape(),
             ],
             this.postTimeSlots);
