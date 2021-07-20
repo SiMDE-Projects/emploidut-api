@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { TimeSlot } from "./TimeSlot";
 import { User } from "./User";
 
@@ -13,6 +13,7 @@ export enum exchangeStatus {
  * @class Exchange
  */
 @Entity()
+@Unique(["exchangedTimeslot", "desiredTimeslot", "suggesterStudent", "aimStudent"])
 export class Exchange {
 
     @PrimaryGeneratedColumn()
