@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { Token } from "../entity/Token";
 import Logger from "./Logger";
 
 var OAuth = require('oauth');
@@ -8,7 +9,7 @@ var axios = require('axios');
 const portailURL = process.env.AUTH_PORTAIL_URL;
 const redirectURL = process.env.AUTH_REDIRECT_URL;
 
-var oauth2 = new OAuth.OAuth2(
+export var oauth2 = new OAuth.OAuth2(
     process.env.AUTH_CLIENT_ID,
     process.env.AUTH_CLIENT_SECRET,
     `${portailURL}/`,
@@ -25,6 +26,7 @@ var authURL = oauth2.getAuthorizeUrl({
 });
 
 export const authenticationFilter = async function (req: Request, res: Response, next: NextFunction) {
+    Logger.debug('Access Token: ' + Token.getAccessToken());
     // Check if the request contains a valid token
     let token = req.header('authorization');
     if (token !== null && token !== undefined && token !== '') {
@@ -48,7 +50,7 @@ export const authenticationFilter = async function (req: Request, res: Response,
             return response;
         });
 
-        if ( responseAxios.status !== 200) {
+        if (responseAxios.status !== 200) {
             return res.redirect(authURL);
         }
 
@@ -71,7 +73,7 @@ export const authenticationFilter = async function (req: Request, res: Response,
                 'redirect_uri': redirectURL,
                 'grant_type':'authorization_code'
             },
-            async function (err:any, access_token:any, refresh_token:any, results:any){
+            async function (err:any, access_token:any, refresh_token:any, results:any) {
                 if (err) {
                     Logger.error(err);
                     return res.status(500).send('Internal Server Error');
