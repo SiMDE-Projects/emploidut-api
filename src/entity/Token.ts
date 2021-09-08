@@ -42,7 +42,7 @@ export class Token {
 
     // Refresh old access_token
     static refreshToken = () => {
-        if (Token.access_token === '' || Token.refresh_token === '') {
+        if (Token.refresh_token === '') {
             Token.createToken();
         }
 
