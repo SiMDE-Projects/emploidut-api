@@ -12,6 +12,7 @@ import { CourseController } from "../controller/CourseController";
 import { TimeSlotController } from "../controller/TimeSlotController";
 import { authenticationFilter } from "./Authentication";
 import Logger, { loggerMiddleware } from "./Logger";
+import { Token } from "../entity/Token";
 
 export class Server {
     private app: express.Application;
@@ -20,10 +21,13 @@ export class Server {
     private courseController?: CourseController;
     private timeSlotController?: TimeSlotController;
 
-    constructor(){
+    constructor() {
         this.app = express(); // init the application
         this.configuration();
         this.routes();
+
+        // Create token instance
+        Token.createToken();
     }
 
     /**
