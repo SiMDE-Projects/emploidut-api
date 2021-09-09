@@ -20,7 +20,7 @@ export class TimeSlotService {
      * @param id 
      * @returns TimeSlot | undefined | null
      */
-    public findTimeSlot = async (id: number) => {
+    public findById = async (id: number) => {
         try {
             const timeSlot = await this.timeSlotRepository.findById(id);
             return timeSlot;

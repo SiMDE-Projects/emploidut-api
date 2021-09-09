@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { check, ValidationError, validationResult } from "express-validator";
-import { TimeSlot, timeSlotType, frequencyType, TimeSlotCriteria } from "../entity/TimeSlot";
+import { timeSlotType, frequencyType, TimeSlotCriteria, dayType } from "../entity/TimeSlot";
 import CallBack from "../services/FunctionStatusCode";
 import Logger from "../services/Logger";
 import { TimeSlotService } from "../services/TimeSlotService";
@@ -85,7 +85,7 @@ export class TimeSlotController {
             res.status(400).send("Error, parameter id is missing or wrong");
             return;
         } else {
-            res.send(await this.timeSlotService.findTimeSlot(parseInt(timeSlotId!, 10)))
+            res.send(await this.timeSlotService.findById(parseInt(timeSlotId!, 10)))
             return;
         }
     }

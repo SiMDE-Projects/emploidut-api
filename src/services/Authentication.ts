@@ -26,7 +26,6 @@ var authURL = oauth2.getAuthorizeUrl({
 });
 
 export const authenticationFilter = async function (req: Request, res: Response, next: NextFunction) {
-    Logger.debug('Access Token: ' + Token.getAccessToken());
     // Check if the request contains a valid token
     let token = req.header('authorization');
     if (token !== null && token !== undefined && token !== '') {

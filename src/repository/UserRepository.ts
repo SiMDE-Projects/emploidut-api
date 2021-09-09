@@ -36,7 +36,7 @@ export class UserRepository extends Repository<User> {
         return this.findOne(id);
     }
 
-    findByLogin(login: string){
+    findByLogin(login: String){
         return this.findOne({"login" : login});
     }
 
