@@ -96,7 +96,7 @@ export class UserController {
         // Get users by login
         const loginQueryParam = req.query.login;
         if (loginQueryParam !== undefined && loginQueryParam !== null) {
-            const user =  await this.userService.findByLogin(String(loginQueryParam));
+            const user = await this.userService.findByLogin(String(loginQueryParam));
             res.json(user).end();
             return;
         }
