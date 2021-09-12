@@ -11,6 +11,8 @@ export class Token {
 
     private static refresh_token: string = '';
     private static access_token: string = '';
+    public static __MAX_RETRIES_ = 3;
+
 
     // Create a token for the client (emploidut back end)
     static createToken = () => {
@@ -18,15 +20,21 @@ export class Token {
         oauth2.getOAuthAccessToken(
             '',
             {
-                'grant_type':'client_credentials',
+                'grant_type': 'client_credentials',
                 'client_id': process.env.AUTH_CLIENT_ID,
                 'client_password': process.env.AUTH_CLIENT_PASSWORD,
             },
             (err:any, access_token:any, refresh_token:any, results:any) => {
-                Logger.debug('Client access_token: ' + access_token);
-                Token.refresh_token = refresh_token;
-                Token.access_token = access_token;
-                return;
+                if (err !== null) {
+                    console.error(err);
+                    Logger.error('Error while getting client access_token: ' + err.message);
+                    return;
+                } else {
+                    Logger.debug('Client access_token: ' + access_token);
+                    Token.refresh_token = refresh_token;
+                    Token.access_token = access_token;
+                    return;
+                }
             }
         );
     }

@@ -1,9 +1,11 @@
-import {Connection, getRepository, getConnection, getCustomRepository} from "typeorm";
-import { TimeSlot } from "../entity/TimeSlot";
-import {UserRepository} from "../repository/UserRepository";
-import {User} from "../entity/User";
+import { getCustomRepository } from "typeorm";
+import { UserRepository } from "../repository/UserRepository";
+import { User } from "../entity/User";
 import Logger from "./Logger";
 import CallBack from "./FunctionStatusCode";
+import { TimeSlotRepository } from "../repository/TimeSlotRepository";
+import { Token } from "../entity/Token";
+var axios = require('axios');
 
 /**
  * User service class
@@ -11,9 +13,21 @@ import CallBack from "./FunctionStatusCode";
 export class UserService {
 
     private userRepository: UserRepository;
+    private timeSlotRepository: TimeSlotRepository;
 
     constructor() {
         this.userRepository = getCustomRepository(UserRepository);
+        this.timeSlotRepository = getCustomRepository(TimeSlotRepository);
+    }
+
+    /** 
+     * Find all users
+     * @param id 
+     * @returns User | undefined
+     */
+     public findAll = async () => {
+        const users = await this.userRepository.find();
+        return users;
     }
 
     /**
@@ -21,8 +35,18 @@ export class UserService {
      * @param id 
      * @returns User | undefined
      */
-    public findUser = async (id: number) => {
+    public findById = async (id: number) => {
         const user = await this.userRepository.findOne(id);
+        return user;
+    }
+
+    /**
+     * Find user by login
+     * @param id 
+     * @returns User | undefined
+     */
+     public findByLogin = async (login: String) => {
+        const user = await this.userRepository.findByLogin(login);
         return user;
     }
 
@@ -41,12 +65,63 @@ export class UserService {
      * @param timeSlots 
      * @returns 
      */
-    static async getUsersByTimeSlots (timeSlots: TimeSlot) {
+    public findUsersByTimeSlot = async (timeSlotId: number) => {
         // TODO: get the Token -> get user's information from the portail
-        // const results = getRepository(TimeSlot).find({
-        //     select: ["users"],
-        // });
-        return [];
+        const timeSlot = await this.timeSlotRepository.findById(timeSlotId);
+        if (timeSlot !== undefined) {
+            const users: Array<User> = [];
+            for (const user of timeSlot.users) {
+                if (user !== null && user.id !== undefined) {
+                    const finalUser = await this.getUserWithPortailData(user);
+                    if (finalUser !== null) {
+                        users.push(finalUser);
+                    }
+                }
+            }
+            return users;    
+        } else {
+            Logger.debug('TimeSlot ' + timeSlotId + ' not found');
+            return [];
+        }
+        
+    }
+
+    private getUserWithPortailData = async (user: User, retry: number = 0) => {
+        if (retry >= Token.__MAX_RETRIES_) {
+            Logger.error('Max retries exceeded while fetching the portail');
+            return null;
+        } else {
+            if (!Token.isValid()) {
+                Token.refreshToken(); 
+            }
+
+            const responseAxios = await axios({
+                method: 'GET',
+                url: `${process.env.AUTH_PORTAIL_URL}/api/v1/users/${user.id}`,
+                headers: {
+                    'Accept': 'application/json',
+                    'Accept-Charset': 'utf-8',
+                    'Authorization': 'Bearer ' + Token.getAccessToken()
+                }
+            }).catch((err: any) => {
+                return err.response;
+            }).then((response: any) => {
+                return response;
+            });
+    
+            if (responseAxios.status === 200) {
+                user.deserializeFromPortailData(responseAxios.data);
+                return user;
+            } else if (responseAxios.status === 401) {
+                Logger.info('Unauthorized while fetching the portail: ' + responseAxios.data.message 
+                    + ' -> ' + responseAxios.data.exception);
+                Token.refreshToken();
+                return this.getUserWithPortailData(user, retry++);
+            } else {
+                Logger.error(responseAxios.data.message + ' -> ' + responseAxios.data.exception);
+                return null;
+            }
+        }
     }
 
     /**

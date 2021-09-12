@@ -1,15 +1,18 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
+import { UserRepository } from "../repository/UserRepository";
 import { TimeTableService } from "../services/TimetableService";
 
 export class TimetableController {
 
     private timeTableService: TimeTableService;
+    private userRepository: UserRepository;
     public router: Router;
 
     constructor() {
         this.timeTableService = new TimeTableService();
+        this.userRepository = new UserRepository();
         this.router = Router();
         this.routes();
     }
@@ -27,7 +30,7 @@ export class TimetableController {
      */
     public getEmploidut = async (req: Request, res: Response, next: NextFunction) => {
         if (req.query.login) {
-            const user = await getRepository(User).findOne({ id: req.query.login });
+            const user = await this.userRepository.findByLogin(String(req.query.login));
 
             if (user === null || user === undefined) {
                 res.status(404).send('Sorry user not found!').end();
