@@ -56,9 +56,9 @@ export class UserController {
     public findOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('GET One User');
 
-        const userId = req?.params.id;
+        const userId = req.params.id;
         if (userId === undefined || userId === null) {
-            res.status(400).send("Error, parameter id is missing or wrong");
+            res.status(404).send("Error, parameter id is missing or wrong");
             return;
         }
         else{
@@ -79,7 +79,7 @@ export class UserController {
         Logger.debug('GET Users');
 
         // Get users by timeSlot
-        const timeSlotQueryParam = req.query.timeSlot;
+        const timeSlotQueryParam = req.query.timeslot;
         if(timeSlotQueryParam !== undefined && timeSlotQueryParam !== null){
             const timeSlot = await this.timeSlotService.findById(parseInt(String(req.query.login)));
 
