@@ -15,7 +15,7 @@ export class TimeSlotController {
         this.routes();
     }
 
-    public routes(){
+    public routes() {
         this.router.get('/:id', this.findOne);
         this.router.get('/:id/users', this.findUsers);
         this.router.get('/', this.getTimeSlots);

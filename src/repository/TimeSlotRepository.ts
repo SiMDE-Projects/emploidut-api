@@ -4,7 +4,7 @@ import {TimeSlot, TimeSlotCriteria, timeSlotType} from "../entity/TimeSlot";
 @EntityRepository(TimeSlot)
 export class TimeSlotRepository extends Repository<TimeSlot> {
 
-    findById(id: number){
+    public findById = (id: number) => {
         return this.createQueryBuilder("timeSlots")
             .innerJoinAndSelect("timeSlots.course", "course")
             .innerJoinAndSelect("timeSlots.users", "user")
@@ -12,30 +12,30 @@ export class TimeSlotRepository extends Repository<TimeSlot> {
             .getOne()
     }
 
-    findByType(type: timeSlotType){
+    public findByType = (type: timeSlotType) => {
         return this.findOne({"type" : type});
     }
 
-    findByRoomNumber(roomNumber: String){
+    public findByRoomNumber = (roomNumber: String) => {
         return this.findOne({"roomNumber" : roomNumber});
     }
 
-    findByStartAt(startAt: TimeSlot){
+    public findByStartAt = (startAt: TimeSlot) => {
         return this.findOne({"startAt" : startAt});
     }
 
-    findByEndAt(endAt: TimeSlot){
+    public findByEndAt = (endAt: TimeSlot) => {
         return this.findOne({"endAt" : endAt});
     }
 
-    findAll() {
+    public findAll = () => {
         return this.createQueryBuilder("timeSlots")
             .innerJoinAndSelect("timeSlots.course", "course")
             .innerJoinAndSelect("timeSlots.users", "user")
             .getMany()
     }
 
-    findByCriteria(criteria: TimeSlotCriteria) {
+    public findByCriteria = (criteria: TimeSlotCriteria) => {
         let query = this.createQueryBuilder("timeSlots");
 
         const type = criteria.type;
@@ -64,7 +64,7 @@ export class TimeSlotRepository extends Repository<TimeSlot> {
             .getMany();
     }
 
-    findTimeSlotByCourse(courseId: String) {
+    public findTimeSlotByCourse = (courseId: String) => {
         return this.createQueryBuilder("timeSlots")
             .innerJoinAndSelect("timeSlots.users", "user")
             .innerJoinAndSelect("timeSlots.course", "course", "course.id = :courseId", { courseId })

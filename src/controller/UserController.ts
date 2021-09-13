@@ -18,7 +18,7 @@ export class UserController {
         this.routes();
     }
 
-    public routes(){
+    public routes() {
         this.router.get('/:id', this.findOne);
         this.router.get('/', this.getUsers);
         this.router.get('/timeslot/:id', this.findUsersByTimeSlot);

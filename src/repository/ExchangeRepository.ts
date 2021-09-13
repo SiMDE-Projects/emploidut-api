@@ -1,7 +1,5 @@
 import { EntityRepository, Repository } from "typeorm";
 import { Exchange, exchangeStatus } from "../entity/Exchange";
-import { TimeSlot } from "../entity/TimeSlot";
-import { User } from "../entity/User";
 
 @EntityRepository(Exchange)
 export class ExchangeRepository extends Repository<Exchange> {
@@ -25,7 +23,7 @@ export class ExchangeRepository extends Repository<Exchange> {
             .getMany()
     }
 
-    findByStatus(status: exchangeStatus) {
+    public findByStatus = (status: exchangeStatus) => {
         return this.createQueryBuilder("exchange")
             .where("exchange.status = :status", { status })
             .getMany();

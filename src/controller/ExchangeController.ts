@@ -16,7 +16,7 @@ export class ExchangeController {
         this.routes();
     }
 
-    public routes(){
+    public routes() {
         this.router.get('/:id', this.findOne);
         this.router.get('/', this.getExchanges);
         this.router.post(

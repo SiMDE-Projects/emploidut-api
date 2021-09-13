@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { check, Result, ValidationError, validationResult } from 'express-validator';
-import { Course, courseType } from "../entity/Course";
+import { check, ValidationError, validationResult } from 'express-validator';
+import { courseType } from "../entity/Course";
 import { CourseService } from "../services/CourseService";
 import CallBack from "../services/FunctionStatusCode";
 import Logger from "../services/Logger";
@@ -16,7 +16,7 @@ export class CourseController {
         this.routes();
     }
 
-    public routes(){
+    public routes() {
         this.router.get('/:id', this.findOne);
         this.router.get('/', this.getCourses);
         this.router.post(

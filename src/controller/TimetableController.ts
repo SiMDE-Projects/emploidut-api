@@ -18,7 +18,7 @@ export class TimetableController {
         this.routes();
     }
 
-    public routes(){
+    public routes() {
         this.router.get('/',
         [
             check('login').trim().escape(),
