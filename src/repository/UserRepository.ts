@@ -79,4 +79,11 @@ export class UserRepository extends Repository<User> {
             .innerJoin("course.timeslots", "timeslots")
             .getMany();
     }
+
+    findUsersByCourse(id: String){
+        return this.createQueryBuilder().distinct()
+            .innerJoin(Course, "course", "course.id = :id", { id})
+            .innerJoin("course.timeslots", "timeslots")
+            .getMany();
+    }
 }
