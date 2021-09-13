@@ -1,5 +1,6 @@
 import {EntityRepository, Repository} from "typeorm";
 import {User} from "../entity/User";
+import Logger from "../services/Logger";
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -36,6 +37,12 @@ export class UserRepository extends Repository<User> {
         return this.findOne(id);
     }
 
+    findByIdWithGroups(id: any) {
+        return this.findOne(id, {
+            relations: ['groups']
+        });
+    }
+
     findByLogin(login: String){
         return this.findOne({"login" : login});
     }
@@ -44,21 +51,24 @@ export class UserRepository extends Repository<User> {
         return this.find();
     }
 
-    findUsers(userList: Array<User> | Array<Number>) {
-        let idsWhere: Array<any> = [];
-        if (userList.length > 0 && Array.isArray(userList) && typeof userList[0] === "number") {
-            for (let userId of userList as Array<Number>) {
-                idsWhere.push({id: userId})
-            }
-            let query = {where: idsWhere}
-            return this.find(query);
+    findUsers(userList: String[]) {
+        if (userList.length > 0) {
+            return this.createQueryBuilder("user")
+                .where("user.id IN (:...ids)", { ids: [...userList] })
+                .getMany();
+        } else {
+            return [];
         }
-        else {
-            for (let user of userList as Array<User>) {
-                idsWhere.push({id: user.id})
-            }
-            let query = {where: idsWhere}
-            return this.find(query);
-        }
+
+        // if (userList.length > 0 && Array.isArray(userList) && typeof userList[0] === "number") {
+        //     Logger.debug(userList);
+        //     query.where("user.id IN (:ids)").setParameter("ids", [1]);
+        // }
+        // else {
+        //     query.where("user.id IN (:ids)").setParameter("ids", userList);
+        // }
+
+        // Logger.debug(query.getSql());
+        // return query.getMany();
     }
 }

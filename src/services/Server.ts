@@ -10,6 +10,7 @@ import { UserController } from "../controller/UserController";
 import { ExchangeController } from "../controller/ExchangeController";
 import { CourseController } from "../controller/CourseController";
 import { TimeSlotController } from "../controller/TimeSlotController";
+import { GroupController } from "../controller/GroupController";
 import { authenticationFilter } from "./Authentication";
 import Logger, { loggerMiddleware } from "./Logger";
 import { TimetableController } from "../controller/TimetableController";
@@ -22,6 +23,7 @@ export class Server {
     private courseController?: CourseController;
     private timeSlotController?: TimeSlotController;
     private timetableController?: TimetableController;
+    private groupController?: GroupController;
 
     constructor() {
         this.app = express(); // init the application
@@ -105,6 +107,7 @@ export class Server {
         this.courseController = new CourseController();
         this.timeSlotController = new TimeSlotController();
         this.timetableController = new TimetableController();
+        this.groupController = new GroupController();
 
         // Configure routes for each controller
         this.app.use("/api/users", this.userController.router);
@@ -112,6 +115,7 @@ export class Server {
         this.app.use("/api/courses", this.courseController.router);
         this.app.use("/api/timeslots", this.timeSlotController.router);
         this.app.use("/api/emploidut", this.timetableController.router);
+        this.app.use("/api/groups", this.groupController.router);
 
         this.unknownRoutesConfiguration();
     }

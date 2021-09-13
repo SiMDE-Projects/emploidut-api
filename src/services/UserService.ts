@@ -35,8 +35,18 @@ export class UserService {
      * @param id 
      * @returns User | undefined
      */
-    public findById = async (id: number) => {
+    public findById = async (id: any) => {
         const user = await this.userRepository.findOne(id);
+        return user;
+    }
+
+    /**
+     * Find user by id adding his/her groups
+     * @param id 
+     * @returns User | undefined
+     */
+     public findByIdWithGroups = async (id: any) => {
+        const user = await this.userRepository.findByIdWithGroups(id);
         return user;
     }
 

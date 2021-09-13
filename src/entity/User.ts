@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn } from "typeorm";
+import {Entity, Column, PrimaryColumn, OneToMany, JoinTable} from "typeorm";
+import { Group } from "./Group";
 
 @Entity()
 export class User {
@@ -13,6 +14,10 @@ export class User {
 
     @Column({default: true})
     enableViewing: Boolean = true;
+
+    @OneToMany(() => Group, groups => groups.owner)
+    @JoinTable()
+    groups!: Group[];
 
     /**
      * These properties come from the portail
