@@ -40,6 +40,7 @@ export class GroupController {
                     .isArray().isUUID()
             ],
             this.putgroups);
+        this.router.delete('/:id', this.delete);
     }
 
     /**
