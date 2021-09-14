@@ -44,7 +44,7 @@ export class ExchangeController {
                         return (Object.values(ExchangeStatus) as String[]).includes(value);
                     }).trim().escape(),
             ],
-            this.postExchanges);
+            this.postOne);
         this.router.put(
             '/:id',
             [
@@ -56,8 +56,20 @@ export class ExchangeController {
                     return (Object.values(ExchangeStatus) as String[]).includes(value);
                 }).trim().escape(),
             ],
-            this.putExchanges);
-        this.router.delete('/:id', this.deleteExchanges);
+            this.putOne);
+        this.router.delete('/:id', this.deleteOne);
+    }
+
+    /**
+     * GET all exchanges
+     * @param req Express Response
+     * @param res Express Response
+     * @param next 
+     * @returns 
+     */
+    public getExchanges = async (req: Request, res: Response, next: NextFunction) => {
+        res.send(await this.exchangeService.findAll());
+        return;
     }
 
     /**
@@ -66,7 +78,7 @@ export class ExchangeController {
      * @param res Express Response
      * @param next Express NextFunction 
      */
-     public findOne = async (req: Request, res: Response, next: NextFunction) => {
+     public getOne = async (req: Request, res: Response, next: NextFunction) => {
         const exchangeId = req.params.id;
         if (typeof exchangeId === undefined || exchangeId === null) {
             res.status(400).send("Error, parameter id is missing or wrong").end();
@@ -138,7 +150,7 @@ export class ExchangeController {
      * @param res Express Response
      * @param next Express NextFunction
      */
-     public postExchanges = async (req: Request, res: Response, next: NextFunction) => {
+     public postOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('POST Course');
         // Check if there are format errors
         const errorFormatter = ({ location, msg, param, value, nestedErrors }: ValidationError) => {            
@@ -178,7 +190,7 @@ export class ExchangeController {
      * @param res Express Response
      * @param next Express NextFunction
      */
-    public putExchanges = async (req: Request, res: Response, next: NextFunction) => {
+    public putOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('PUT Exchange');
         // Check if there are format errors
         const errorFormatter = ({ location, msg, param, value, nestedErrors }: ValidationError) => {            
@@ -229,7 +241,7 @@ export class ExchangeController {
      * @param res Express Response
      * @param next Express NextFunction
      */
-     public deleteExchanges = async (req: Request, res: Response, next: NextFunction) => {
+     public deleteOne = async (req: Request, res: Response, next: NextFunction) => {
         // Check path id
         const exchangeId = req.params.id;
         if (exchangeId === undefined || exchangeId === null) {

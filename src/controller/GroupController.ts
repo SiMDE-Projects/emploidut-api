@@ -18,9 +18,9 @@ export class GroupController {
         this.routes();
     }
 
-    public routes(){
-        this.router.get('/:id', this.findOne);
-        this.router.get('/', this.getgroups);
+    public routes() {
+        this.router.get('/', this.getGroups);
+        this.router.get('/:id', this.getOne);
         this.router.post(
             '/',
             [
@@ -29,7 +29,7 @@ export class GroupController {
                     .exists().withMessage('Field "users" is missing')
                     .isArray().isUUID()
             ],
-            this.postgroups);
+            this.postOne);
         this.router.put(
             '/:id',
             [
@@ -38,8 +38,23 @@ export class GroupController {
                     .exists().withMessage('Field "users" is missing')
                     .isArray().isUUID()
             ],
-            this.putgroups);
-        this.router.delete('/:id', this.delete);
+            this.putOne);
+        this.router.delete('/:id', this.deleteOne);
+    }
+
+    /**
+     * GET all groups
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     * @returns 
+     */
+     public getGroups = async (req: Request, res: Response, next: NextFunction) => {
+        Logger.debug('GET groups');
+        // Return every groups in DB
+        const groups = await this.groupService.findAll();
+        res.send(groups).end();
+        return;
     }
 
     /**
@@ -49,7 +64,7 @@ export class GroupController {
      * @param next Express NextFunction
      * @returns 
      */
-     public findOne = async (req: Request, res: Response, next: NextFunction) => {
+     public getOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('GET One Group');
         const groupId = req.params.id;
         if (groupId === undefined || groupId === null) {
@@ -70,27 +85,12 @@ export class GroupController {
     }
 
     /**
-     * GET all groups
-     * @param req Express Request
-     * @param res Express Response
-     * @param next Express NextFunction
-     * @returns 
-     */
-    public getgroups = async (req: Request, res: Response, next: NextFunction) => {
-        Logger.debug('GET groups');
-        // Return every groups in DB
-        const groups = await this.groupService.findAll();
-        res.send(groups).end();
-        return;
-    }
-
-    /**
      * POST group
      * @param req Express Request 
      * @param res Express Response
      * @param next Express NextFunction
      */
-    public postgroups = async (req: Request, res: Response, next: NextFunction) => {
+    public postOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('POST group');
         // Check if there are format errors
         const errorFormatter = ({ location, msg, param, value, nestedErrors }: ValidationError) => {            
@@ -136,7 +136,7 @@ export class GroupController {
      * @param res Express Response
      * @param next Express NextFunction
      */
-    public putgroups = async (req: Request, res: Response, next: NextFunction) => {
+    public putOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('PUT group');
         // Check if there are format errors
         const errorFormatter = ({ location, msg, param, value, nestedErrors }: ValidationError) => {            
@@ -187,7 +187,7 @@ export class GroupController {
      * @param res Express Response
      * @param next Express NextFunction
      */
-     public delete = async (req: Request, res: Response, next: NextFunction) => {
+     public deleteOne = async (req: Request, res: Response, next: NextFunction) => {
         // Check path id
         const groupId = req.params.id;
         if (groupId === undefined || groupId === null) {

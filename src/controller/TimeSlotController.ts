@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { check, ValidationError, validationResult } from "express-validator";
+import { check, query, ValidationError, validationResult } from "express-validator";
 import { timeSlotType, frequencyType, TimeSlotCriteria, dayType } from "../entity/TimeSlot";
 import CallBack from "../services/FunctionStatusCode";
 import Logger from "../services/Logger";
@@ -16,9 +16,38 @@ export class TimeSlotController {
     }
 
     public routes() {
-        this.router.get('/:id', this.findOne);
-        this.router.get('/:id/users', this.findUsers);
-        this.router.get('/', this.getTimeSlots);
+        this.router.get(
+            '/',
+            [
+                query('type')
+                    .isString().withMessage('Only letters and digits allowed in "type"')
+                    .trim().isLength({min: 2}).withMessage('"Type" non valid').escape(),
+                query('roomNumber').isString().withMessage('Only letters and digits allowed in "type"')
+                    .trim().escape(),
+                query('startAt')
+                    .isString().withMessage('Only letters and digits allowed in title.')
+                    .trim().escape(),
+                query('endAt').trim().escape(),
+            ],
+            this.getTimeSlots
+        );
+        this.router.get(
+            '/users',
+            [
+                query('type')
+                    .isString().withMessage('Only letters and digits allowed in "type"')
+                    .trim().isLength({min: 2}).withMessage('"Type" non valid').escape(),
+                query('roomNumber').isString().withMessage('Only letters and digits allowed in "type"')
+                    .trim().escape(),
+                query('startAt')
+                    .isString().withMessage('Only letters and digits allowed in title.')
+                    .trim().escape(),
+                query('endAt').trim().escape(),
+            ],
+            this.getTimeSlotsWithUsers
+        );
+        this.router.get('/:id', this.getOne);
+        this.router.get('/:id/users', this.getOneWithUsers);
         this.router.get('/course/:id', this.getCourseTimeSlots);
         this.router.post(
             '/',
@@ -50,7 +79,7 @@ export class TimeSlotController {
                         return (Object.values(dayType) as String[]).includes(value);
                     }).trim().escape(),
             ],
-            this.postTimeSlots);
+            this.postOne);
         this.router.put(
             '/:id',
             [
@@ -68,9 +97,62 @@ export class TimeSlotController {
                         return (Object.values(frequencyType) as String[]).includes(value);
                     }).trim().escape(),
             ],
-            this.putTimeSlots);
-        this.router.delete('/:id', this.delete);
+            this.putOne);
+        this.router.delete('/:id', this.deleteOne);
     }
+
+    private isQueryParamsEmpty = (queryParams: Object): boolean => {
+        return Object.values(queryParams).every((value: any) => {
+            return value === '';
+        });
+    }
+        /**
+     * GET timeSlots
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     */
+         public getTimeSlots = async (req: Request, res: Response, next: NextFunction) => {
+            Logger.debug('GET TimeSolts');
+            const queryParams = req.query;
+            if (!this.isQueryParamsEmpty(queryParams)) {
+                Logger.debug('GET TimeSolts by criteria');
+                const criteria = new TimeSlotCriteria(queryParams);
+                const timeSlots = await this.timeSlotService.findByCriteria(criteria);
+                res.json(timeSlots).end();
+                return;
+            } else {
+                Logger.debug('GET all TimeSolts');
+                // Get all users 
+                const timeSlots = await this.timeSlotService.findAll();
+                res.json(timeSlots).end();
+                return;
+            }
+        }
+    
+        /**
+         * GET timeSlots with users
+         * @param req Express Request
+         * @param res Express Response
+         * @param next Express NextFunction
+         */
+         public getTimeSlotsWithUsers = async (req: Request, res: Response, next: NextFunction) => {
+            Logger.debug('GET TimeSolts');
+            const queryParams = req.query;
+            if (!this.isQueryParamsEmpty(queryParams)) {
+                Logger.debug('GET TimeSolts by criteria');
+                const criteria = new TimeSlotCriteria(queryParams);
+                const timeSlots = await this.timeSlotService.findByCriteriaWithUsers(criteria);
+                res.json(timeSlots).end();
+                return;
+            } else {
+                Logger.debug('GET all TimeSolts');
+                // Get all users 
+                const timeSlots = await this.timeSlotService.findAllWithUsers();
+                res.json(timeSlots).end();
+                return;
+            }
+        }
 
     /**
      * GET timeSlots by id
@@ -78,7 +160,7 @@ export class TimeSlotController {
      * @param res Express Response
      * @param next Express NextFunction
      */
-    public findOne = async (req: Request, res: Response, next: NextFunction) => {
+    public getOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('GET One TimeSolt');
         const timeSlotId = req.params.id;
         if (timeSlotId === undefined || timeSlotId === null) {
@@ -96,7 +178,7 @@ export class TimeSlotController {
      * @param res Express Response
      * @param next Express NextFunction
      */
-    public findUsers = async (req: Request, res: Response, next: NextFunction) => {
+    public getOneWithUsers = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('GET Users by TimeSolt');
         const timeSlotId = req.params.id;
         if (timeSlotId === undefined || timeSlotId === null) {
@@ -104,30 +186,6 @@ export class TimeSlotController {
             return;
         } else {
             res.send(await this.timeSlotService.findUsers(parseInt(timeSlotId!, 10)))
-            return;
-        }
-    }
-
-    /**
-     * GET timeSlots
-     * @param req Express Request
-     * @param res Express Response
-     * @param next Express NextFunction
-     */
-    public getTimeSlots = async (req: Request, res: Response, next: NextFunction) => {
-        Logger.debug('GET TimeSolts');
-        const queryParams = req.query;
-        if (queryParams !== undefined || queryParams !== null) {
-            Logger.debug('GET TimeSolts by criteria');
-            const criteria = new TimeSlotCriteria(queryParams);
-            const timeSlots = await this.timeSlotService.findByCriteria(criteria);
-            res.json(timeSlots).end();
-            return;
-        } else {
-            Logger.debug('GET all TimeSolts');
-            // Get all users 
-            const timeSlots = await this.timeSlotService.findAll();
-            res.json(timeSlots).end();
             return;
         }
     }
@@ -156,7 +214,7 @@ export class TimeSlotController {
      * @param res Express Response
      * @param next Express NextFunction
      */
-    public postTimeSlots = async (req: Request, res: Response, next: NextFunction) => {
+    public postOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('POST TimeSolt');
         // Check if there are format errors
         const errorFormatter = ({ location, msg, param, value, nestedErrors }: ValidationError) => {            
@@ -196,7 +254,7 @@ export class TimeSlotController {
      * @param res Express Response
      * @param next Express NextFunction
      */
-    public putTimeSlots = async (req: Request, res: Response, next: NextFunction) => {
+    public putOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('PUT TimeSolt');
         // Check if there are format errors
         const errorFormatter = ({ location, msg, param, value, nestedErrors }: ValidationError) => {            
@@ -247,7 +305,7 @@ export class TimeSlotController {
      * @param res Express Response
      * @param next Express NextFunction
      */
-    public delete = async (req: Request, res: Response, next: NextFunction) => {
+    public deleteOne = async (req: Request, res: Response, next: NextFunction) => {
         // Check path id
         const timeSlotId = req.params.id;
         if (timeSlotId === undefined || timeSlotId === null) {
