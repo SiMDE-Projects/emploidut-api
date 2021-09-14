@@ -20,18 +20,20 @@ export class ExchangeController {
     }
 
     public routes() {
-        this.router.get('/:id', this.findOne);
-        this.router.get('/:id/validate', this.validateExchange)
         this.router.get('/', this.getExchanges);
+        this.router.get('/:id', this.getOne);
+        this.router.get('/:id/validate', this.validateExchange)
+        this.router.get('/:id/cancel', this.cancelExchange)
         this.router.post(
             '/',
             [
                 check('suggesterStudent')
                     .exists().withMessage('Field "suggesterStudent" is missing')
-                    .isNumeric().trim().escape(),
+                    .isUUID().trim().escape(),
                 check('aimStudent')
                     .exists().withMessage('Field "aimStudent" is missing')
-                    .isNumeric().trim().escape(),
+                    .isUUID().custom((value, { req }) => value !== req.body.suggesterStudent).withMessage('Field "aimStudent" must be different from "suggesterStudent"')
+                    .trim().escape(),
                 check('exchangedTimeslot')
                     .exists().withMessage('Field "exchangedTimeslot" is missing')
                     .isNumeric().trim().escape(),
@@ -48,8 +50,10 @@ export class ExchangeController {
         this.router.put(
             '/:id',
             [
-                check('suggesterStudent').isNumeric().trim().escape(),
-                check('aimStudent').isNumeric().trim().escape(),
+                check('suggesterStudent').isUUID().trim().escape(),
+                check('aimStudent')
+                    .isUUID().custom((value, { req }) => value !== req.body.suggesterStudent).withMessage('Field "aimStudent" must be different from "suggesterStudent"')
+                    .trim().escape(),
                 check('exchangedTimeslot').isNumeric().trim().escape(),
                 check('desiredTimeslot').isNumeric().trim().escape(),
                 check('status').custom((value: String) => {
@@ -80,11 +84,11 @@ export class ExchangeController {
      */
      public getOne = async (req: Request, res: Response, next: NextFunction) => {
         const exchangeId = req.params.id;
-        if (typeof exchangeId === undefined || exchangeId === null) {
+        if (exchangeId === undefined || exchangeId === null) {
             res.status(400).send("Error, parameter id is missing or wrong").end();
             return;
         } else {
-            res.send(await this.exchangeService.findUser(parseInt(exchangeId, 10)))
+            res.send(await this.exchangeService.findById(parseInt(exchangeId, 10)))
             return;
         }
     }
@@ -98,50 +102,115 @@ export class ExchangeController {
      */
      public validateExchange = async (req: Request, res: Response, next: NextFunction) => {
         const exchangeId = req.params.id;
-        if (typeof exchangeId === undefined || exchangeId === null) {
+        if (exchangeId === undefined || exchangeId === null) {
             res.status(400).send("Error, parameter id is missing or wrong").end();
             return;
         } else {
             // Get the exchange to validate
-            const exchange = await this.exchangeService.findUser(parseInt(exchangeId, 10));
+            const exchange = await this.exchangeService.findById(parseInt(exchangeId, 10));
 
-            // Verify that the user who validate is the right one
-            const user = await this.userService.findUser(res.locals.user.id);
-            if (user === undefined) {
-                res.status(403).send("Unauthorized").end();
-            }
+            if (exchange !== undefined) {
+                // Verify that the user who validate is the right one
+                const user = await this.userService.findById(res.locals.user.id);
+                if (user === undefined) {
+                    Logger.error("User no found => id: " + res.locals.user.id);
+                    res.status(403).send("Unauthorized").end();
+                    return;
+                } else {
+                    // Body validation is now complete
+                    const responseCode = await this.exchangeService.validate(exchange, user);
 
-            // Body validation is now complete
-            const responseCode = await this.exchangeService.validate(exchange);
-            switch (responseCode) {
-                case CallBack.Status.DB_ERROR: {
-                    res.status(404).send("An error occurred while validating the exchange. Please try later and verify values sent").end();
-                    break;
+                    switch (responseCode) {
+                        case CallBack.Status.DB_ERROR: {
+                            res.status(404)
+                                .send("An error occurred while validating the exchange. Please try later and verify values sent").end();
+                            break;
+                        }
+                        case CallBack.Status.LOGIC_ERROR: {
+                            res.status(401)
+                                .send("Unauthorized to validate this exchange")
+                                .end();
+                            break;
+                        }
+                        case CallBack.Status.FAILURE: {
+                            res.status(404)
+                                .send("Fail to validate the exchange. Please try later or verify values sent")
+                                .end();
+                            break;
+                        }
+                        case CallBack.Status.SUCCESS: {
+                            res.end();
+                            break;
+                        }
+                        default:
+                            res.end();
+                            break;
+                    }
                 }
-                case CallBack.Status.FAILURE: {
-                    res.status(404).send("Fail to validate the exchange. Please try later or verify values sent").end();
-                    break;
-                }
-                case CallBack.Status.SUCCESS: {
-                    res.end();
-                    break;
-                }
-                default: break;
+            } else {
+                Logger.error("Exchange not found => id: " + exchangeId);
+                res.status(404).send("Entity not found").end();
+                return;
             }
-            return;
         }
     }
 
     /**
-     * GET all exchanges
-     * @param req Express Response
+     * Cancel the exchange
+     * @param req Express Request
      * @param res Express Response
-     * @param next 
+     * @param next Express NextFunction
      * @returns 
      */
-    public getExchanges = async (req: Request, res: Response, next: NextFunction) => {
-        res.send(await this.exchangeService.findAll());
-        return;
+     public cancelExchange = async (req: Request, res: Response, next: NextFunction) => {
+        const exchangeId = req.params.id;
+        if (exchangeId === undefined || exchangeId === null) {
+            res.status(400).send("Error, parameter id is missing or wrong").end();
+            return;
+        } else {
+            // Get the exchange to validate
+            const exchange = await this.exchangeService.findById(parseInt(exchangeId, 10));
+
+            if (exchange !== undefined) {
+                // Verify that the user who validate is the right one
+                const user = await this.userService.findById(res.locals.user.id);
+                if (user === undefined) {
+                    Logger.error("User no found => id: " + res.locals.user.id);
+                    res.status(403).send("Unauthorized").end();
+                } else {
+                    // Body validation is now complete
+                    const responseCode = await this.exchangeService.cancel(exchange, user);
+                    switch (responseCode) {
+                        case CallBack.Status.DB_ERROR: {
+                            res.status(404)
+                                .send("An error occurred while validating the exchange. Please try later and verify values sent").end();
+                            break;
+                        }
+                        case CallBack.Status.LOGIC_ERROR: {
+                            res.status(401)
+                                .send("Unauthorized to validate this exchange")
+                                .end();
+                            break;
+                        }
+                        case CallBack.Status.FAILURE: {
+                            res.status(404)
+                                .send("Fail to validate the exchange. Please try later or verify values sent")
+                                .end();
+                            break;
+                        }
+                        case CallBack.Status.SUCCESS: {
+                            res.end();
+                            break;
+                        }
+                        default: break;
+                    }
+                }
+            } else {
+                Logger.error("Exchange not found => id: " + exchangeId);
+                res.status(404).send("Entity not found").end();
+                return;
+            }
+        }
     }
 
     /**

@@ -1,17 +1,18 @@
 import { EntityRepository, Repository } from "typeorm";
-import { Exchange, exchangeStatus } from "../entity/Exchange";
+import { Exchange, ExchangeStatus } from "../entity/Exchange";
+import { User } from "../entity/User";
 
 @EntityRepository(Exchange)
 export class ExchangeRepository extends Repository<Exchange> {
 
     public findOneWithRelations = (id: number) => {
         return this.createQueryBuilder('exchange')
-            .where("exchange.id = :id", { id })            
+            .where("exchange.id = :id", { id })  
             .innerJoinAndSelect('exchange.exchangedTimeslot', 'exchangedTimeslot')
             .innerJoinAndSelect('exchange.desiredTimeslot', 'desiredTimeslot')
             .innerJoinAndSelect('exchange.suggesterStudent', 'suggesterStudent')
             .innerJoinAndSelect('exchange.aimStudent', 'aimStudent')
-            .getOne()
+            .getOne();
     }
 
     public findWithRelations = () => {
@@ -20,10 +21,10 @@ export class ExchangeRepository extends Repository<Exchange> {
             .innerJoinAndSelect('exchange.desiredTimeslot', 'desiredTimeslot')
             .innerJoinAndSelect('exchange.suggesterStudent', 'suggesterStudent')
             .innerJoinAndSelect('exchange.aimStudent', 'aimStudent')
-            .getMany()
+            .getMany();
     }
 
-    public findByStatus = (status: exchangeStatus) => {
+    public findByStatus = (status: ExchangeStatus) => {
         return this.createQueryBuilder("exchange")
             .where("exchange.status = :status", { status })
             .getMany();
