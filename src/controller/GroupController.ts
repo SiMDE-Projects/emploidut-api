@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { check, Result, ValidationError, validationResult } from 'express-validator';
-import { Group } from "../entity/Group";
+import { check, ValidationError, validationResult } from 'express-validator';
 import CallBack from "../services/FunctionStatusCode";
 import Logger from "../services/Logger";
 import { GroupService } from "../services/GroupService";

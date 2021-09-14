@@ -4,25 +4,25 @@ import { User } from "../entity/User";
 
 @EntityRepository(Course)
 export class CourseRepository extends Repository<Course> {
-    findById(id: String){
+    public findById = (id: String) => {
         return this.createQueryBuilder("course")
             .where("course.id = :id", { id})
             .getOne()
     }
 
-    findByName(name: String){
+    public findByName = (name: String) => {
         return this.createQueryBuilder("course")
             .where("course.id = :id", { name})
             .getOne()
     }
 
-    findByCourseType(courseType: String){
+    public findByCourseType = (courseType: String) => {
         return this.createQueryBuilder("course")
             .where("course.courseType = :id", { courseType})
             .getMany()
     }
 
-    findTimeTable(user: User) {
+    public findTimeTable = (user: User) => {
         return this.createQueryBuilder("course")
             .innerJoinAndSelect("course.timeslots", "ts")
             .innerJoinAndSelect("ts.users", "u")

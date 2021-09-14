@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { Token } from "../entity/Token";
 import Logger from "./Logger";
 
 var OAuth = require('oauth');

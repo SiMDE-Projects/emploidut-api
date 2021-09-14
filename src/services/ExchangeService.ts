@@ -1,5 +1,4 @@
 import { getCustomRepository } from "typeorm";
-import { Exchange } from "../entity/Exchange";
 import { ExchangeRepository } from "../repository/ExchangeRepository";
 import CallBack from "./FunctionStatusCode";
 import Logger from "./Logger";
