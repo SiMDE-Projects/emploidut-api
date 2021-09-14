@@ -7,7 +7,7 @@ export class TimeSlotRepository extends Repository<TimeSlot> {
     public findById = (id: number) => {
         return this.createQueryBuilder("timeSlots")
             .innerJoinAndSelect("timeSlots.course", "course")
-            .innerJoinAndSelect("timeSlots.users", "user")
+            .innerJoinAndSelect("timeSlots.users", "users")
             .where("timeSlots.id = :id", { id })
             .getOne()
     }
