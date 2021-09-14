@@ -1,4 +1,5 @@
 import {EntityRepository, Repository} from "typeorm";
+import { Course } from "../entity/Course";
 import {User} from "../entity/User";
 import Logger from "../services/Logger";
 
@@ -70,5 +71,19 @@ export class UserRepository extends Repository<User> {
 
         // Logger.debug(query.getSql());
         // return query.getMany();
+    }
+
+    findUsersByCourse(id: String){
+        return this.createQueryBuilder().distinct()
+            .innerJoin(Course, "course", "course.id = :id", { id})
+            .innerJoin("course.timeslots", "timeslots")
+            .getMany();
+    }
+
+    findUsersByCourse(id: String){
+        return this.createQueryBuilder().distinct()
+            .innerJoin(Course, "course", "course.id = :id", { id})
+            .innerJoin("course.timeslots", "timeslots")
+            .getMany();
     }
 }
