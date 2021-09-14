@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { check, ValidationError, validationResult } from "express-validator";
-import { TimeSlot, timeSlotType, frequencyType, dayType } from "../entity/TimeSlot";
+import { timeSlotType, frequencyType, TimeSlotCriteria, dayType } from "../entity/TimeSlot";
 import CallBack from "../services/FunctionStatusCode";
 import Logger from "../services/Logger";
 import { TimeSlotService } from "../services/TimeSlotService";
@@ -15,9 +15,11 @@ export class TimeSlotController {
         this.routes();
     }
 
-    public routes(){
+    public routes() {
         this.router.get('/:id', this.findOne);
+        this.router.get('/:id/users', this.findUsers);
         this.router.get('/', this.getTimeSlots);
+        this.router.get('/course/:id', this.getCourseTimeSlots);
         this.router.post(
             '/',
             [
@@ -83,7 +85,25 @@ export class TimeSlotController {
             res.status(400).send("Error, parameter id is missing or wrong");
             return;
         } else {
-            res.send(await this.timeSlotService.findTimeSlot(parseInt(timeSlotId!, 10)))
+            res.send(await this.timeSlotService.findById(parseInt(timeSlotId!, 10)))
+            return;
+        }
+    }
+
+    /**
+     * GET users by timeSlot
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     */
+    public findUsers = async (req: Request, res: Response, next: NextFunction) => {
+        Logger.debug('GET Users by TimeSolt');
+        const timeSlotId = req.params.id;
+        if (timeSlotId === undefined || timeSlotId === null) {
+            res.status(400).send("Error, parameter id is missing or wrong");
+            return;
+        } else {
+            res.send(await this.timeSlotService.findUsers(parseInt(timeSlotId!, 10)))
             return;
         }
     }
@@ -96,6 +116,38 @@ export class TimeSlotController {
      */
     public getTimeSlots = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('GET TimeSolts');
+        const queryParams = req.query;
+        if (queryParams !== undefined || queryParams !== null) {
+            Logger.debug('GET TimeSolts by criteria');
+            const criteria = new TimeSlotCriteria(queryParams);
+            const timeSlots = await this.timeSlotService.findByCriteria(criteria);
+            res.json(timeSlots).end();
+            return;
+        } else {
+            Logger.debug('GET all TimeSolts');
+            // Get all users 
+            const timeSlots = await this.timeSlotService.findAll();
+            res.json(timeSlots).end();
+            return;
+        }
+    }
+
+    /**
+     * GET timeSlots by course's id
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     */
+     public getCourseTimeSlots = async (req: Request, res: Response, next: NextFunction) => {
+        Logger.debug('GET Course by TimeSolt');
+        const courseId = req.params.id;
+        if (courseId === undefined || courseId === null || courseId === '') {
+            res.status(400).send("Error, parameter id is missing or wrong");
+            return;
+        } else {
+            res.send(await this.timeSlotService.findTimeSlotByCourse(courseId));
+            return;
+        }
     }
 
     /**

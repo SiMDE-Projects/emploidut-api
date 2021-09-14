@@ -1,5 +1,6 @@
 import { getCustomRepository } from "typeorm";
 import { CourseRepository } from "../repository/CourseRepository";
+import { UserRepository } from "../repository/UserRepository";
 import CallBack from "./FunctionStatusCode";
 import Logger from "./Logger";
 
@@ -9,9 +10,11 @@ import Logger from "./Logger";
 export class CourseService {
 
     private courseRepository: CourseRepository;
+    private userRepository: UserRepository;
 
     constructor() {
         this.courseRepository = getCustomRepository(CourseRepository);
+        this.userRepository = getCustomRepository(UserRepository);
     }
 
     /**
@@ -19,9 +22,19 @@ export class CourseService {
      * @param id 
      * @returns Course | undefined
      */
-    public findOne = async (id: string) => {
+    public findOne = async (id: String) => {
         const course = await this.courseRepository.findById(id);
         return course;
+    }
+
+    /**
+     * Get users from course's id
+     * @param id 
+     * @returns Course | undefined
+     */
+    public findUsers = async (id: String) => {
+        const users = await this.userRepository.findUsersByCourse(id);
+        return users;
     }
 
     /**

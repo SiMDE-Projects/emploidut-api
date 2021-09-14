@@ -19,7 +19,7 @@ export class ExchangeController {
         this.routes();
     }
 
-    public routes(){
+    public routes() {
         this.router.get('/:id', this.findOne);
         this.router.get('/:id/validate', this.validateExchange)
         this.router.get('/', this.getExchanges);

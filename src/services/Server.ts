@@ -10,8 +10,10 @@ import { UserController } from "../controller/UserController";
 import { ExchangeController } from "../controller/ExchangeController";
 import { CourseController } from "../controller/CourseController";
 import { TimeSlotController } from "../controller/TimeSlotController";
+import { GroupController } from "../controller/GroupController";
 import { authenticationFilter } from "./Authentication";
 import Logger, { loggerMiddleware } from "./Logger";
+import { TimetableController } from "../controller/TimetableController";
 import { Token } from "../entity/Token";
 
 export class Server {
@@ -20,6 +22,8 @@ export class Server {
     private exchangeController?: ExchangeController;
     private courseController?: CourseController;
     private timeSlotController?: TimeSlotController;
+    private timetableController?: TimetableController;
+    private groupController?: GroupController;
 
     constructor() {
         this.app = express(); // init the application
@@ -50,7 +54,7 @@ export class Server {
         this.app.all('*', authenticationFilter);
     }
 
-    private unknowRoutesConfiguration() {
+    private unknownRoutesConfiguration() {
         // catch 404 and forward to error handler
         this.app.use(function(req: Request, res: Response, next: NextFunction) {
             next(createError(404));
@@ -102,14 +106,18 @@ export class Server {
         this.exchangeController = new ExchangeController();
         this.courseController = new CourseController();
         this.timeSlotController = new TimeSlotController();
+        this.timetableController = new TimetableController();
+        this.groupController = new GroupController();
 
         // Configure routes for each controller
         this.app.use("/api/users", this.userController.router);
         this.app.use("/api/exchanges", this.exchangeController.router);
         this.app.use("/api/courses", this.courseController.router);
         this.app.use("/api/timeslots", this.timeSlotController.router);
+        this.app.use("/api/emploidut", this.timetableController.router);
+        this.app.use("/api/groups", this.groupController.router);
 
-        this.unknowRoutesConfiguration();
+        this.unknownRoutesConfiguration();
     }
 
     /**

@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { Token } from "../entity/Token";
 import Logger from "./Logger";
 
 var OAuth = require('oauth');
@@ -26,7 +25,6 @@ var authURL = oauth2.getAuthorizeUrl({
 });
 
 export const authenticationFilter = async function (req: Request, res: Response, next: NextFunction) {
-    Logger.debug('Access Token: ' + Token.getAccessToken());
     // Check if the request contains a valid token
     let token = req.header('authorization');
     if (token !== null && token !== undefined && token !== '') {
@@ -55,6 +53,7 @@ export const authenticationFilter = async function (req: Request, res: Response,
         }
 
         // Send the request to next server's middlware
+        res.locals.user = responseAxios.data;
         next();
         return;
     }

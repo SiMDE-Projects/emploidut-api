@@ -1,121 +1,97 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { check, ValidationError, validationResult } from 'express-validator';
-import { courseType } from "../entity/Course";
-import { CourseService } from "../services/CourseService";
 import CallBack from "../services/FunctionStatusCode";
 import Logger from "../services/Logger";
+import { GroupService } from "../services/GroupService";
+import { UserService } from "../services/UserService";
 
-export class CourseController {
+export class GroupController {
 
-    private courseService: CourseService;
+    private groupService: GroupService;
+    private userService: UserService;
     public router: Router;
 
     constructor() {
-        this.courseService = new CourseService();
+        this.groupService = new GroupService();
+        this.userService = new UserService();
         this.router = Router();
         this.routes();
     }
 
-    public routes() {
+    public routes(){
         this.router.get('/:id', this.findOne);
-        this.router.get('/:id/users', this.findUsers);
-        this.router.get('/', this.getCourses);
+        this.router.get('/', this.getgroups);
         this.router.post(
             '/',
             [
-                check('id').exists().withMessage('Field "id" is missing').isAlphanumeric().trim().escape(),
-                check('name').exists().withMessage('Field "name" is missing').trim().escape(),
-                check('type')
-                    .exists().withMessage('Field "type" is missing')
-                    .custom((value: String) => {
-                        return (Object.values(courseType) as String[]).includes(value);
-                    }).trim().escape(),
+                check('title').exists().withMessage('Field "title" is missing').trim().escape(),
+                check('users')
+                    .exists().withMessage('Field "users" is missing')
+                    .isArray().isUUID()
             ],
-            this.postCourses);
+            this.postgroups);
         this.router.put(
             '/:id',
             [
-                check('id').trim().escape(),
-                check('name').trim().escape(),
-                check('type').custom((value: String) => {
-                        return (Object.values(courseType) as String[]).includes(value);
-                    }).trim().escape(),
+                check('title').trim().escape(),
+                check('users')
+                    .exists().withMessage('Field "users" is missing')
+                    .isArray().isUUID()
             ],
-            this.putCourses);
+            this.putgroups);
+        this.router.delete('/:id', this.delete);
     }
 
     /**
-     * GET course by id
+     * GET group by id
      * @param req Express Request
      * @param res Express Response
      * @param next Express NextFunction
      * @returns 
      */
      public findOne = async (req: Request, res: Response, next: NextFunction) => {
-        Logger.debug('GET One Course');
-        const courseId = req.params.id;
-        if (courseId === undefined || courseId === null) {
+        Logger.debug('GET One Group');
+        const groupId = req.params.id;
+        if (groupId === undefined || groupId === null) {
             res.status(400).send("Error, parameter id is missing or wrong").end();
             return;
         }
         else {
-            const course = await this.courseService.findOne(courseId);
-            if (course === undefined) {
-                // Send 404 error
+            const group = await this.groupService.findOne(groupId);
+            if (group === undefined  || group === null) {
                 res.status(404).send('Entity not found').end();
                 return;
             }
 
-            // Send course found
-            res.send(course).end();
+            // Send group found
+            res.send(group).end();
             return;
         }
     }
 
     /**
-     * GET users from course's id
+     * GET all groups
      * @param req Express Request
      * @param res Express Response
      * @param next Express NextFunction
      * @returns 
      */
-     public findUsers = async (req: Request, res: Response, next: NextFunction) => {
-        Logger.debug('GET Users from one Course');
-        const courseId = req.params.id;
-        if (courseId === undefined || courseId === null) {
-            res.status(400).send("Error, parameter id is missing or wrong").end();
-            return;
-        }
-        else {
-            const users = await this.courseService.findUsers(courseId);
-            res.send(users).end();
-            return;
-        }
-    }
-
-    /**
-     * GET all courses
-     * @param req Express Request
-     * @param res Express Response
-     * @param next Express NextFunction
-     * @returns 
-     */
-    public getCourses = async (req: Request, res: Response, next: NextFunction) => {
-        Logger.debug('GET Courses');
-        // Return every courses in DB
-        const courses = await this.courseService.findAll();
-        res.send(courses).end();
+    public getgroups = async (req: Request, res: Response, next: NextFunction) => {
+        Logger.debug('GET groups');
+        // Return every groups in DB
+        const groups = await this.groupService.findAll();
+        res.send(groups).end();
         return;
     }
 
     /**
-     * POST course
+     * POST group
      * @param req Express Request 
      * @param res Express Response
      * @param next Express NextFunction
      */
-    public postCourses = async (req: Request, res: Response, next: NextFunction) => {
-        Logger.debug('POST Course');
+    public postgroups = async (req: Request, res: Response, next: NextFunction) => {
+        Logger.debug('POST group');
         // Check if there are format errors
         const errorFormatter = ({ location, msg, param, value, nestedErrors }: ValidationError) => {            
             return `${location}[${param}]: ${msg}`;
@@ -128,34 +104,40 @@ export class CourseController {
             return;
         }
 
-        // Body validation is now complete
-        const responseCode = await this.courseService.create(req.body)
-        switch (responseCode) {
-            case CallBack.Status.DB_ERROR: {
-                res.status(404).send("An error occurred while creating the entity. Please try later and verify values sent").end();
-                break;
+        // Get the requester user
+        const user = await this.userService.findById(res.locals.user.id);
+
+        if (user !== undefined) {
+            // Body validation is now complete
+            const responseCode = await this.groupService.create(req.body, user)
+            switch (responseCode) {
+                case CallBack.Status.DB_ERROR: {
+                    res.status(404).send("An error occurred while creating the entity. Please try later and verify values sent").end();
+                    break;
+                }
+                case CallBack.Status.FAILURE: {
+                    res.status(404).send("Fail to insert entity, Please try later and verify values sent").end();
+                    break;
+                }
+                case CallBack.Status.SUCCESS: {
+                    res.end();
+                    break;
+                }
+                default: break;
             }
-            case CallBack.Status.FAILURE: {
-                res.status(404).send("Fail to insert entity, Please try later and verify values sent").end();
-                break;
-            }
-            case CallBack.Status.SUCCESS: {
-                res.end();
-                break;
-            }
-            default: break;
         }
+        
         return;
     }
 
     /**
-     * PUT course
+     * PUT group
      * @param req Express Request
      * @param res Express Response
      * @param next Express NextFunction
      */
-    public putCourses = async (req: Request, res: Response, next: NextFunction) => {
-        Logger.debug('PUT Course');
+    public putgroups = async (req: Request, res: Response, next: NextFunction) => {
+        Logger.debug('PUT group');
         // Check if there are format errors
         const errorFormatter = ({ location, msg, param, value, nestedErrors }: ValidationError) => {            
             return `${location}[${param}]: ${msg}`;
@@ -169,13 +151,13 @@ export class CourseController {
         }
 
         // Check path id
-        const courseId = req.params.id;
-        if (courseId === undefined || courseId === null) {
+        const groupId = req.params.id;
+        if (groupId === undefined || groupId === null) {
             res.status(400).send("Error, parameter id is missing or wrong");
             return;
         } else {
             // Body validation and path validation are now complete
-            const responseCode = await this.courseService.update(req.body, parseInt(courseId!, 10));
+            const responseCode = await this.groupService.update(req.body, parseInt(groupId!, 10));
             switch (responseCode) {
                 case CallBack.Status.DB_ERROR: {
                     res.status(404).send("An error occurred while creating the entity. Please try later and verify values sent").end();
@@ -200,19 +182,19 @@ export class CourseController {
     }
 
     /**
-     * DELETE course 
+     * DELETE group 
      * @param req Express Request
      * @param res Express Response
      * @param next Express NextFunction
      */
      public delete = async (req: Request, res: Response, next: NextFunction) => {
         // Check path id
-        const courseId = req.params.id;
-        if (courseId === undefined || courseId === null) {
+        const groupId = req.params.id;
+        if (groupId === undefined || groupId === null) {
             res.status(404).send("Error, parameter id is missing or wrong");
             return;
         } else {
-            const response = await this.courseService.delete(parseInt(courseId!, 10));
+            const response = await this.groupService.delete(parseInt(groupId!, 10));
             res.end();
             return;
         }

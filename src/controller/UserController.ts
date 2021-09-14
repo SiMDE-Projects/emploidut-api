@@ -1,29 +1,32 @@
-import { getRepository } from "typeorm";
-import { TimeSlot } from "../entity/TimeSlot";
-import { User } from "../entity/User";
 import { UserService } from "../services/UserService";
 import { NextFunction, Request, Response, Router } from "express";
 import CallBack from "../services/FunctionStatusCode";
 import { check, ValidationError, validationResult } from "express-validator";
 import Logger from "../services/Logger";
+import { TimeSlotService } from "../services/TimeSlotService";
 
 export class UserController {
 
     private userService: UserService;
+    public timeSlotService: TimeSlotService;
     public router: Router;
 
     constructor() {
         this.userService = new UserService();
+        this.timeSlotService = new TimeSlotService();
         this.router = Router();
         this.routes();
     }
 
-    public routes(){
+    public routes() {
         this.router.get('/:id', this.findOne);
         this.router.get('/', this.getUsers);
+        this.router.get('/timeslot/:id', this.findUsersByTimeSlot);
         this.router.post(
             '/',
             [
+                check('id').exists().withMessage('Field "id" is missing')
+                    .isUUID().trim().escape(),
                 check('login').exists().withMessage('Field "login" is missing')
                     .trim().escape().isLength({ max: 10 }),
                 check('enableConsultation').exists().withMessage('Field "enableConsultation" is missing')
@@ -53,13 +56,13 @@ export class UserController {
     public findOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('GET One User');
 
-        const userId = req?.params.id;
+        const userId = req.params.id;
         if (userId === undefined || userId === null) {
-            res.status(400).send("Error, parameter id is missing or wrong");
+            res.status(404).send("Error, parameter id is missing or wrong");
             return;
         }
         else{
-            res.send(await this.userService.findUser(parseInt(userId!)));
+            res.send(await this.userService.findById(parseInt(userId!)));
             return;
         }
     }
@@ -76,9 +79,9 @@ export class UserController {
         Logger.debug('GET Users');
 
         // Get users by timeSlot
-        const timeSlotQueryParam = req.query.timeSlot;
+        const timeSlotQueryParam = req.query.timeslot;
         if(timeSlotQueryParam !== undefined && timeSlotQueryParam !== null){
-            const timeSlot = await getRepository(TimeSlot).findOne({id: parseInt(String(req.query.login))});
+            const timeSlot = await this.timeSlotService.findById(parseInt(String(req.query.login)));
 
             //Check if the user exist
             if (timeSlot !== null && timeSlot !== undefined) {
@@ -93,15 +96,36 @@ export class UserController {
         // Get users by login
         const loginQueryParam = req.query.login;
         if (loginQueryParam !== undefined && loginQueryParam !== null) {
-            const user = await getRepository(User).findOne({ id: loginQueryParam });
+            const user = await this.userService.findByLogin(String(loginQueryParam));
             res.json(user).end();
             return;
         }
 
         // Get all users -> TODO: Check permissions
-        const users = await getRepository(User).find();
+        const users = await this.userService.findAll();
         res.json(users).end();
         return;
+    }
+
+    /**
+     * GET user by id
+     * @param req Express Request
+     * @param res 
+     * @param next 
+     * @returns 
+     */
+    public findUsersByTimeSlot = async (req: Request, res: Response, next: NextFunction) => {
+        Logger.debug('GET User by TimeSolt');
+
+        const timeSlotId = req.params.id;
+        if (timeSlotId === undefined || timeSlotId === null) {
+            res.status(400).send("Error, parameter id is missing or wrong");
+            return;
+        }
+        else{
+            res.send(await this.userService.findUsersByTimeSlot(parseInt(timeSlotId!)));
+            return;
+        }
     }
 
     /**
