@@ -65,11 +65,38 @@ export class TimeSlotService {
     }
 
     /**
+     * Get TimeSlots by criteria and with users
+     * @param criteria TimeSlotCriteria
+     */
+     public findByCriteriaWithUsers = async (criteria: TimeSlotCriteria) => {
+        try {
+            const timeSlots = await this.timeSlotRepository.findByCriteriaWithUsers(criteria);
+            return timeSlots;
+        } catch (err) {
+            Logger.error(err);
+            return [];
+        }
+    }
+
+    /**
      * Get all TimeSlots
      */
     public findAll = async () => {
         try {
             const timeSlots = await this.timeSlotRepository.findAll();
+            return timeSlots;
+        } catch (err) {
+            Logger.error(err);
+            return [];
+        }
+    }
+
+    /**
+     * Get all TimeSlots
+     */
+     public findAllWithUsers = async () => {
+        try {
+            const timeSlots = await this.timeSlotRepository.findAllWithUsers();
             return timeSlots;
         } catch (err) {
             Logger.error(err);
