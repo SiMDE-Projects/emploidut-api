@@ -1,11 +1,15 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
 import { TimeSlot } from "./TimeSlot";
 import { User } from "./User";
 
 export enum ExchangeStatus {
     'PENDING' = 'PENDING',
-    'ACCEPTED' ='ACCEPTED',
-    'VALIDATED' ='VALIDATED'
+    'SUGGESTER_STUDENT_ACCEPTED' = 'SUGGESTER_STUDENT_ACCEPTED',
+    'AIM_STUDENT_VALIDATED' = 'AIM_STUDENT_VALIDATED',
+    'VALIDATED' = 'VALIDATED',
+    'SUGGESTER_STUDENT_CANCELLED' = 'SUGGESTER_STUDENT_CANCELLED',
+    'AIM_STUDENT_CANCELLED' = 'AIM_STUDENT_CANCELLED',
+    'CANCELLED' = 'CANCELLED'
 };
 
 /**
@@ -17,26 +21,30 @@ export enum ExchangeStatus {
 export class Exchange {
 
     @PrimaryGeneratedColumn()
-    id?: number;
+    id!: number;
 
     @Column({
         type: "enum",
-        enum: ["PENDING" , "ACCEPTED" , "VALIDATED"],
+        enum: ["PENDING" , "SUGGESTER_STUDENT_ACCEPTED", "AIM_STUDENT_VALIDATED", "VALIDATED" , "SUGGESTER_STUDENT_CANCELLED",
+            "AIM_STUDENT_CANCELLED", "CANCELLED"],
         default: "PENDING"
     })
-    status?: String = ExchangeStatus.PENDING;
+    status: String = ExchangeStatus.PENDING;
+
+    @UpdateDateColumn()
+    readonly updatedAt!: Date;
 
     @ManyToOne(() => TimeSlot, timeSlot => timeSlot.id)
-    exchangedTimeslot?: TimeSlot;
+    exchangedTimeslot!: TimeSlot;
 
     @ManyToOne(() => TimeSlot, timeSlot => timeSlot.id)
-    desiredTimeslot?: TimeSlot;
+    desiredTimeslot!: TimeSlot;
 
     @ManyToOne(() => User, user => user.id)
-    suggesterStudent?: User;
+    suggesterStudent!: User;
 
     @ManyToOne(() => User, user => user.id)
-    aimStudent?: User;
+    aimStudent!: User;
 
     /**
      * Constructor for Exchange
