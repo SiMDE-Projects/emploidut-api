@@ -17,7 +17,7 @@ export class ExchangeController {
     }
 
     public routes() {
-        this.router.get('/:id', this.findOne);
+        this.router.get('/:id', this.getOne);
         this.router.get('/', this.getExchanges);
         this.router.post(
             '/',
@@ -40,7 +40,7 @@ export class ExchangeController {
                         return (Object.values(exchangeStatus) as String[]).includes(value);
                     }).trim().escape(),
             ],
-            this.postExchanges);
+            this.postOne);
         this.router.put(
             '/:id',
             [
@@ -52,27 +52,8 @@ export class ExchangeController {
                     return (Object.values(exchangeStatus) as String[]).includes(value);
                 }).trim().escape(),
             ],
-            this.putExchanges);
-        this.router.delete('/:id', this.deleteExchanges);
-    }
-
-    /**
-     * GET exchange by id
-     * @param req Express Request
-     * @param res Express Response
-     * @param next Express NextFunction
-     * @returns 
-     */
-     public findOne = async (req: Request, res: Response, next: NextFunction) => {
-        const exchangeId = req.params.id;
-        if (typeof exchangeId === undefined || exchangeId === null) {
-            res.status(400).send("Error, parameter id is missing or wrong");
-            return;
-        }
-        else{
-            res.send(await this.exchangeService.findUser(parseInt(exchangeId, 10)))
-            return;
-        }
+            this.putOne);
+        this.router.delete('/:id', this.deleteOne);
     }
 
     /**
@@ -88,12 +69,31 @@ export class ExchangeController {
     }
 
     /**
+     * GET exchange by id
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     * @returns 
+     */
+     public getOne = async (req: Request, res: Response, next: NextFunction) => {
+        const exchangeId = req.params.id;
+        if (typeof exchangeId === undefined || exchangeId === null) {
+            res.status(400).send("Error, parameter id is missing or wrong");
+            return;
+        }
+        else{
+            res.send(await this.exchangeService.findUser(parseInt(exchangeId, 10)))
+            return;
+        }
+    }
+
+    /**
      * POST exchange
      * @param req Express Request 
      * @param res Express Response
      * @param next Express NextFunction
      */
-     public postExchanges = async (req: Request, res: Response, next: NextFunction) => {
+     public postOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('POST Course');
         // Check if there are format errors
         const errorFormatter = ({ location, msg, param, value, nestedErrors }: ValidationError) => {            
@@ -133,7 +133,7 @@ export class ExchangeController {
      * @param res Express Response
      * @param next Express NextFunction
      */
-    public putExchanges = async (req: Request, res: Response, next: NextFunction) => {
+    public putOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('PUT Exchange');
         // Check if there are format errors
         const errorFormatter = ({ location, msg, param, value, nestedErrors }: ValidationError) => {            
@@ -184,7 +184,7 @@ export class ExchangeController {
      * @param res Express Response
      * @param next Express NextFunction
      */
-     public deleteExchanges = async (req: Request, res: Response, next: NextFunction) => {
+     public deleteOne = async (req: Request, res: Response, next: NextFunction) => {
         // Check path id
         const exchangeId = req.params.id;
         if (exchangeId === undefined || exchangeId === null) {

@@ -17,9 +17,9 @@ export class CourseController {
     }
 
     public routes() {
-        this.router.get('/:id', this.findOne);
-        this.router.get('/:id/users', this.findUsers);
         this.router.get('/', this.getCourses);
+        this.router.get('/:id', this.getOne);
+        this.router.get('/:id/users', this.getOneWithUsers);
         this.router.post(
             '/',
             [
@@ -31,7 +31,7 @@ export class CourseController {
                         return (Object.values(courseType) as String[]).includes(value);
                     }).trim().escape(),
             ],
-            this.postCourses);
+            this.postOne);
         this.router.put(
             '/:id',
             [
@@ -41,7 +41,23 @@ export class CourseController {
                         return (Object.values(courseType) as String[]).includes(value);
                     }).trim().escape(),
             ],
-            this.putCourses);
+            this.putOne);
+        this.router.delete('/:id', this.deleteOne);
+    }
+
+    /**
+     * GET all courses
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     * @returns 
+     */
+     public getCourses = async (req: Request, res: Response, next: NextFunction) => {
+        Logger.debug('GET Courses');
+        // Return every courses in DB
+        const courses = await this.courseService.findAll();
+        res.send(courses).end();
+        return;
     }
 
     /**
@@ -51,7 +67,7 @@ export class CourseController {
      * @param next Express NextFunction
      * @returns 
      */
-     public findOne = async (req: Request, res: Response, next: NextFunction) => {
+     public getOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('GET One Course');
         const courseId = req.params.id;
         if (courseId === undefined || courseId === null) {
@@ -79,7 +95,7 @@ export class CourseController {
      * @param next Express NextFunction
      * @returns 
      */
-     public findUsers = async (req: Request, res: Response, next: NextFunction) => {
+     public getOneWithUsers = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('GET Users from one Course');
         const courseId = req.params.id;
         if (courseId === undefined || courseId === null) {
@@ -94,27 +110,12 @@ export class CourseController {
     }
 
     /**
-     * GET all courses
-     * @param req Express Request
-     * @param res Express Response
-     * @param next Express NextFunction
-     * @returns 
-     */
-    public getCourses = async (req: Request, res: Response, next: NextFunction) => {
-        Logger.debug('GET Courses');
-        // Return every courses in DB
-        const courses = await this.courseService.findAll();
-        res.send(courses).end();
-        return;
-    }
-
-    /**
      * POST course
      * @param req Express Request 
      * @param res Express Response
      * @param next Express NextFunction
      */
-    public postCourses = async (req: Request, res: Response, next: NextFunction) => {
+    public postOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('POST Course');
         // Check if there are format errors
         const errorFormatter = ({ location, msg, param, value, nestedErrors }: ValidationError) => {            
@@ -154,7 +155,7 @@ export class CourseController {
      * @param res Express Response
      * @param next Express NextFunction
      */
-    public putCourses = async (req: Request, res: Response, next: NextFunction) => {
+    public putOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('PUT Course');
         // Check if there are format errors
         const errorFormatter = ({ location, msg, param, value, nestedErrors }: ValidationError) => {            
@@ -205,7 +206,7 @@ export class CourseController {
      * @param res Express Response
      * @param next Express NextFunction
      */
-     public delete = async (req: Request, res: Response, next: NextFunction) => {
+     public deleteOne = async (req: Request, res: Response, next: NextFunction) => {
         // Check path id
         const courseId = req.params.id;
         if (courseId === undefined || courseId === null) {

@@ -19,8 +19,8 @@ export class UserController {
     }
 
     public routes() {
-        this.router.get('/:id', this.findOne);
         this.router.get('/', this.getUsers);
+        this.router.get('/:id', this.getOne);
         this.router.get('/timeslot/:id', this.findUsersByTimeSlot);
         this.router.post(
             '/',
@@ -34,7 +34,7 @@ export class UserController {
                 check('enableViewing').exists().withMessage('Field "enableViewing" is missing')
                     .isBoolean().trim().escape(),
             ],
-            this.postUsers);
+            this.postOne);
         this.router.put(
             '/:id',
             [
@@ -42,29 +42,8 @@ export class UserController {
                 check('enableConsultation').isBoolean().trim().escape(),
                 check('enableViewing').isBoolean().trim().escape(),
             ],
-            this.putUsers);
-        this.router.delete('/:id', this.deleteUsers);
-    }
-
-    /**
-     * GET user by id
-     * @param req Express Request
-     * @param res 
-     * @param next 
-     * @returns 
-     */
-    public findOne = async (req: Request, res: Response, next: NextFunction) => {
-        Logger.debug('GET One User');
-
-        const userId = req.params.id;
-        if (userId === undefined || userId === null) {
-            res.status(404).send("Error, parameter id is missing or wrong");
-            return;
-        }
-        else{
-            res.send(await this.userService.findById(parseInt(userId!)));
-            return;
-        }
+            this.putOne);
+        this.router.delete('/:id', this.deleteOne);
     }
 
     /**
@@ -75,7 +54,7 @@ export class UserController {
      * @param next Express NextFunction
      * @returns 
      */
-     public getUsers = async (req: Request, res: Response, next: NextFunction) => {
+    public getUsers = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('GET Users');
 
         // Get users by timeSlot
@@ -114,6 +93,27 @@ export class UserController {
      * @param next 
      * @returns 
      */
+    public getOne = async (req: Request, res: Response, next: NextFunction) => {
+        Logger.debug('GET One User');
+
+        const userId = req.params.id;
+        if (userId === undefined || userId === null) {
+            res.status(404).send("Error, parameter id is missing or wrong");
+            return;
+        }
+        else{
+            res.send(await this.userService.findById(parseInt(userId!)));
+            return;
+        }
+    }
+
+    /**
+     * GET user by id
+     * @param req Express Request
+     * @param res 
+     * @param next 
+     * @returns 
+     */
     public findUsersByTimeSlot = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('GET User by TimeSolt');
 
@@ -134,7 +134,7 @@ export class UserController {
      * @param res Express Response
      * @param next Express NextFunction
      */
-    public postUsers = async (req: Request, res: Response, next: NextFunction) => {
+    public postOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('POST User');
 
         // Check if there are format errors
@@ -175,7 +175,7 @@ export class UserController {
      * @param res Express Response
      * @param next Express NextFunction
      */
-     public putUsers = async (req: Request, res: Response, next: NextFunction) => {
+     public putOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('PUT User');
 
         // Check if there are format errors
@@ -227,7 +227,7 @@ export class UserController {
      * @param res Express Response
      * @param next Express NextFunction
      */
-    public deleteUsers = async (req: Request, res: Response, next: NextFunction) => {
+    public deleteOne = async (req: Request, res: Response, next: NextFunction) => {
         // Check path id
         const userId = req.params.id;
         if (userId === undefined || userId === null) {

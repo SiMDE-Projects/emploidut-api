@@ -31,11 +31,45 @@ export class TimeSlotRepository extends Repository<TimeSlot> {
     public findAll = () => {
         return this.createQueryBuilder("timeSlots")
             .innerJoinAndSelect("timeSlots.course", "course")
+            .getMany()
+    }
+
+    public findAllWithUsers = () => {
+        return this.createQueryBuilder("timeSlots")
+            .innerJoinAndSelect("timeSlots.course", "course")
             .innerJoinAndSelect("timeSlots.users", "user")
             .getMany()
     }
 
     public findByCriteria = (criteria: TimeSlotCriteria) => {
+        let query = this.createQueryBuilder("timeSlots");
+
+        const type = criteria.type;
+        if (type !== undefined && type !== null) {
+            query = query.andWhere("timeSlots.type = :type", { type });
+        }
+
+        const roomNumber = criteria.roomNumber;
+        if (roomNumber !== undefined && roomNumber !== null) {
+            query = query.andWhere("timeSlots.roomNumber = :roomNumber", { roomNumber });
+        }
+
+        const startAt = criteria.startAt;
+        if (startAt !== undefined && startAt !== null) {
+            query = query.andWhere("timeSlots.startAt = :startAt", { startAt });
+        }
+
+        const endAt = criteria.endAt;
+        if (endAt !== undefined && endAt !== null) {
+            query = query.andWhere("timeSlots.endAt = :endAt", { endAt });
+        }
+
+        return query
+            .innerJoinAndSelect("timeSlots.course", "course")
+            .getMany();
+    }
+
+    public findByCriteriaWithUsers = (criteria: TimeSlotCriteria) => {
         let query = this.createQueryBuilder("timeSlots");
 
         const type = criteria.type;
