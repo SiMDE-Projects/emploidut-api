@@ -31,19 +31,25 @@ export enum dayType {
 export class TimeSlotCriteria {
     course?: String;
     type?: String;
-    roomNumber?: number;
+    roomNumber?: String;
     startAt?: String;
     endAt?: String;
+    day?: String;
+    frequency?: String;
 
     // Serialize from object to class
-    constructor(queryPrams: any) {
-        if (queryPrams.course !== undefined || queryPrams.course !== null) {this.course = queryPrams.course;}
-        if (queryPrams.type !== undefined || queryPrams.type !== null) {this.type = queryPrams.type;}
-        if (queryPrams.roomNumber !== undefined || queryPrams.roomNumber !== null) {
-            this.roomNumber = queryPrams.roomNumber;
+    constructor(object: Object) {
+        if (object['course'] !== undefined || object['course'] !== null) {this.course = object['course'];}
+        if (object['type'] !== undefined || object['type'] !== null) {this['type'] = object['type'];}
+        if (object['roomNumber'] !== undefined || object['roomNumber'] !== null) {
+            this['roomNumber'] = object['roomNumber'];
         }
-        if (queryPrams.startAt !== undefined || queryPrams.startAt !== null) {this.startAt = queryPrams.startAt;}
-        if (queryPrams.endAt !== undefined || queryPrams.endAt !== null) {this.endAt = queryPrams.endAt;}
+        if (object['startAt'] !== undefined || object['startAt'] !== null) {this['startAt'] = object['startAt'];}
+        if (object['endAt'] !== undefined || object['endAt'] !== null) {this['endAt'] = object['endAt'];}
+        if (object['day'] !== undefined || object['day'] !== null) {this['day'] = object['day'];}
+        if (object['frequency'] !== undefined || object['frequency'] !== null) {
+            this['frequency'] = object['frequency'];
+        }
     }
 }
 
