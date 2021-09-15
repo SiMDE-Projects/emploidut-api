@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { check, ValidationError, validationResult } from 'express-validator';
-import { courseType } from "../entity/Course";
 import { CourseService } from "../services/CourseService";
 import CallBack from "../services/FunctionStatusCode";
 import Logger from "../services/Logger";
@@ -24,22 +23,12 @@ export class CourseController {
             '/',
             [
                 check('id').exists().withMessage('Field "id" is missing').isAlphanumeric().trim().escape(),
-                check('name').exists().withMessage('Field "name" is missing').trim().escape(),
-                check('type')
-                    .exists().withMessage('Field "type" is missing')
-                    .custom((value: String) => {
-                        return (Object.values(courseType) as String[]).includes(value);
-                    }).trim().escape(),
             ],
             this.postOne);
         this.router.put(
             '/:id',
             [
                 check('id').trim().escape(),
-                check('name').trim().escape(),
-                check('type').custom((value: String) => {
-                        return (Object.values(courseType) as String[]).includes(value);
-                    }).trim().escape(),
             ],
             this.putOne);
         this.router.delete('/:id', this.deleteOne);
