@@ -30,7 +30,7 @@ export class CourseService {
     /**
      * Get users from course's id
      * @param id 
-     * @returns Course | undefined
+     * @returns User[]
      */
     public findUsers = async (id: String) => {
         const users = await this.userRepository.findUsersByCourse(id);
