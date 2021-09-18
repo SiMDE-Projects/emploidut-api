@@ -77,61 +77,15 @@ export class UserService {
      */
     public findUsersByTimeSlot = async (timeSlotId: number) => {
         // TODO: get the Token -> get user's information from the portail
+        Logger.debug("findUsersByTimeSlot called");
         const timeSlot = await this.timeSlotRepository.findById(timeSlotId);
         if (timeSlot !== undefined) {
-            const users: Array<User> = [];
-            for (const user of timeSlot.users) {
-                if (user !== null && user.id !== undefined) {
-                    const finalUser = await this.getUserWithPortailData(user);
-                    if (finalUser !== null) {
-                        users.push(finalUser);
-                    }
-                }
-            }
-            return users;    
+            return timeSlot.users;    
         } else {
             Logger.debug('TimeSlot ' + timeSlotId + ' not found');
             return [];
         }
         
-    }
-
-    private getUserWithPortailData = async (user: User, retry: number = 0) => {
-        if (retry >= Token.__MAX_RETRIES_) {
-            Logger.error('Max retries exceeded while fetching the portail');
-            return null;
-        } else {
-            if (!Token.isValid()) {
-                Token.refreshToken(); 
-            }
-
-            const responseAxios = await axios({
-                method: 'GET',
-                url: `${process.env.AUTH_PORTAIL_URL}/api/v1/users/${user.id}`,
-                headers: {
-                    'Accept': 'application/json',
-                    'Accept-Charset': 'utf-8',
-                    'Authorization': 'Bearer ' + Token.getAccessToken()
-                }
-            }).catch((err: any) => {
-                return err.response;
-            }).then((response: any) => {
-                return response;
-            });
-    
-            if (responseAxios.status === 200) {
-                user.deserializeFromPortailData(responseAxios.data);
-                return user;
-            } else if (responseAxios.status === 401) {
-                Logger.info('Unauthorized while fetching the portail: ' + responseAxios.data.message 
-                    + ' -> ' + responseAxios.data.exception);
-                Token.refreshToken();
-                return this.getUserWithPortailData(user, retry++);
-            } else {
-                Logger.error(responseAxios.data.message + ' -> ' + responseAxios.data.exception);
-                return null;
-            }
-        }
     }
 
     /**
