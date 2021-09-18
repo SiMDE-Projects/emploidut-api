@@ -49,7 +49,7 @@ export const authenticationFilter = async function (req: Request, res: Response,
         });
 
         if (responseAxios.status !== 200) {
-            return res.redirect(authURL);
+            return res.status(401).send('Unautorized: Access token or authorization code is missing');
         }
 
         // Send the request to next server's middlware
@@ -63,14 +63,14 @@ export const authenticationFilter = async function (req: Request, res: Response,
 
     if (authorizationCode === null || authorizationCode === undefined || authorizationCode === '') {
         // Handle redirection (the user is not connected with oauth2 yet)
-        return res.redirect(authURL);
+        return res.status(401).send('Unautorized: Acces otken or authorization code missing');
     } else {
         // Obtaining access_token
         oauth2.getOAuthAccessToken(
             authorizationCode,
             {
                 'redirect_uri': redirectURL,
-                'grant_type':'authorization_code'
+                'grant_type':'authorization_code',
             },
             async function (err:any, access_token:any, refresh_token:any, results:any) {
                 if (err) {
@@ -95,6 +95,7 @@ export const authenticationFilter = async function (req: Request, res: Response,
                     }).then(function (response:any) {
                         // Print user information
                         Logger.debug(response.data);
+                        res.locals.user = response.data;
                         next();
                     }).catch(function (err:any) {
                         console.error(err);
